@@ -3,10 +3,10 @@ class GameManager:
         pass
 
     def start_game(self):
-        pass
+        print("Game started")
 
     def next_question(self):
         pass
 
     def check_answer(self, answer):
-        pass
+        print(f"Checking answer: {answer}")

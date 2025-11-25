@@ -1,5 +1,6 @@
-from PyQt5.QtWidgets import QMainWindow, QMenuBar, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit
+from PyQt5.QtWidgets import QMainWindow, QMenuBar, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QPushButton
 from PyQt5.QtCore import Qt
+from logic import GameManager
 
 class MainWindow(QMainWindow):
     """Main window for the math game application.
@@ -17,6 +18,8 @@ class MainWindow(QMainWindow):
     def __init__(self):
         """Initialize the main window and create the user interface."""
         super().__init__()
+
+        self.game_manager = GameManager()
         # Create the main layout first
         self._createUI()
         
@@ -56,6 +59,10 @@ class MainWindow(QMainWindow):
         menuBar.addMenu(subjectMenu)
         menuBar.addMenu(startGameMenu)
         menuBar.addMenu(seeScoresMenu)
+
+        newGameAction = startGameMenu.addAction("New Game")
+        newGameAction.triggered.connect(self.game_manager.start_game)
+
 
     def _createQuestionArea(self, question):
         """Create the question display area.
@@ -99,6 +106,7 @@ class MainWindow(QMainWindow):
         button_layout = QHBoxLayout()
         
         self.submitButton = QPushButton("Submit")
+        self.submitButton.clicked.connect(self.on_submit)
         self.skipButton = QPushButton("Skip")
         
         button_layout.addStretch()
@@ -108,5 +116,9 @@ class MainWindow(QMainWindow):
         
         button_widget.setLayout(button_layout)
         return button_widget
-
+    
+    def on_submit(self):
+        """Handle the submit button click."""
+        user_answer = self.answerInput.text()
+        self.game_manager.check_answer(user_answer)
 

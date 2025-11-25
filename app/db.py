@@ -13,7 +13,8 @@ class DatabaseManager:
                 name TEXT,
                 score INTEGER,
                 difficulty TEXT,
-                subject TEXT
+                subject TEXT,
+                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             )
         ''')
         c.execute('''
@@ -22,3 +23,4 @@ class DatabaseManager:
         ''', (name, score, difficulty, subject))
         conn.commit()
         conn.close()
+
