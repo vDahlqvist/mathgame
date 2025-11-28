@@ -50,18 +50,21 @@ class MainWindow(QMainWindow):
         Adds menu items for Preferences, Levels, Subjects, Start Game, and See Scores.
         """
         menuBar = self.menuBar()
-        preferencesMenu = QMenu("&Preferences", self)
-        levelMenu = QMenu("&Levels", self)
-        subjectMenu = QMenu("&Subjects", self)
-        startGameMenu = QMenu("&Start Game", self)
-        seeScoresMenu = QMenu("&See Scores", self)
-        menuBar.addMenu(preferencesMenu)
-        menuBar.addMenu(levelMenu)
-        menuBar.addMenu(subjectMenu)
-        menuBar.addMenu(startGameMenu)
-        menuBar.addMenu(seeScoresMenu)
+        self.preferencesMenu = QMenu("&Preferences", self)
+        self.levelMenu = QMenu("&Levels", self)
+        self.subjectMenu = QMenu("&Subjects", self)
+        self.startGameMenu = QMenu("&Start Game", self)
+        self.seeScoresMenu = QMenu("&See Scores", self)
+        self.endGameMenu = QMenu("&End Game", self)
+        menuBar.addMenu(self.preferencesMenu)
+        menuBar.addMenu(self.levelMenu)
+        menuBar.addMenu(self.subjectMenu)
+        menuBar.addMenu(self.startGameMenu)
+        menuBar.addMenu(self.seeScoresMenu)
+        menuBar.addMenu(self.endGameMenu)
+        self.endGameMenu.setEnabled(False)  # Disabled initially
 
-        newGameAction = startGameMenu.addAction("New Game")
+        newGameAction = self.startGameMenu.addAction("New Game")
         newGameAction.triggered.connect(self.game_manager.start_game)
 
 

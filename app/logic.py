@@ -19,6 +19,12 @@ class GameManager:
             self.gui.answerInput.setEnabled(True)
             self.gui.submitButton.setEnabled(True)
             self.gui.skipButton.setEnabled(True)
+            self.gui.levelMenu.setEnabled(False)
+            self.gui.subjectMenu.setEnabled(False)
+            self.gui.startGameMenu.setEnabled(False)
+            self.gui.seeScoresMenu.setEnabled(False)
+            self.gui.endGameMenu.setEnabled(True)
+            
 
     def next_question(self):
         pass
