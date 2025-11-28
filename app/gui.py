@@ -1,5 +1,5 @@
 from PyQt5.QtWidgets import QMainWindow, QMenuBar, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QPushButton
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QTimer
 from logic import GameManager
 
 class MainWindow(QMainWindow):
@@ -38,6 +38,7 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self._createQuestionArea("Fråga"))
         main_layout.addWidget(self._createAnswerArea())
         main_layout.addWidget(self._createButtonArea())
+        main_layout.addWidget(self._createTimerArea())
         main_layout.addStretch()
         
         central_widget.setLayout(main_layout)
@@ -78,6 +79,7 @@ class MainWindow(QMainWindow):
         font = self.questionWidget.font()
         font.setPointSize(30)
         self.questionWidget.setFont(font)
+        self.questionWidget.setEnabled(False)  # Disabled until game starts
         return self.questionWidget
     
     def _createAnswerArea(self):
@@ -92,6 +94,7 @@ class MainWindow(QMainWindow):
         font = self.answerInput.font()
         font.setPointSize(20)
         self.answerInput.setFont(font)
+        self.answerInput.setEnabled(False)  # Disabled until game starts
         return self.answerInput
     
     def _createButtonArea(self):
@@ -115,10 +118,36 @@ class MainWindow(QMainWindow):
         button_layout.addStretch()
         
         button_widget.setLayout(button_layout)
+        self.submitButton.setEnabled(False)  # Disabled until game starts
+        self.skipButton.setEnabled(False)    # Disabled until game starts
         return button_widget
     
+    def _createTimerArea(self):
+        """Create the timer area.
+
+        Returns:
+            QLabel: Label widget displaying the elapsed time.
+        """
+        self.timer = QTimer()
+        self.timer.timeout.connect(self._updateTimer)  # Connect timer to update function
+        
+        self.time_elapsed = 0  # Start at 0 seconds
+        self.timerWidget = QLabel(f"Time: {self.time_elapsed}s")
+        self.timerWidget.setAlignment(Qt.AlignCenter)
+        font = self.timerWidget.font()
+        font.setPointSize(20)
+        self.timerWidget.setFont(font)
+        
+        return self.timerWidget
+    
+    def _updateTimer(self):
+        """Update the timer display by counting up."""
+        self.time_elapsed += 1
+        self.timerWidget.setText(f"Time: {self.time_elapsed}s")
+
     def on_submit(self):
         """Handle the submit button click."""
         user_answer = self.answerInput.text()
+        self.timer.stop()  # Stop timer when answer is submitted
         self.game_manager.check_answer(user_answer)
 
