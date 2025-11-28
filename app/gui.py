@@ -19,7 +19,7 @@ class MainWindow(QMainWindow):
         """Initialize the main window and create the user interface."""
         super().__init__()
 
-        self.game_manager = GameManager()
+        self.game_manager = GameManager(gui=self)  # Pass self reference
         # Create the main layout first
         self._createUI()
         
@@ -63,6 +63,8 @@ class MainWindow(QMainWindow):
 
         newGameAction = startGameMenu.addAction("New Game")
         newGameAction.triggered.connect(self.game_manager.start_game)
+
+
 
 
     def _createQuestionArea(self, question):
@@ -129,9 +131,10 @@ class MainWindow(QMainWindow):
             QLabel: Label widget displaying the elapsed time.
         """
         self.timer = QTimer()
-        self.timer.timeout.connect(self._updateTimer)  # Connect timer to update function
+        self.timer.timeout.connect(self._updateTimer)
         
         self.time_elapsed = 0  # Start at 0 seconds
+        self.start_time = 0  # Store start time
         self.timerWidget = QLabel(f"Time: {self.time_elapsed}s")
         self.timerWidget.setAlignment(Qt.AlignCenter)
         font = self.timerWidget.font()
@@ -145,9 +148,22 @@ class MainWindow(QMainWindow):
         self.time_elapsed += 1
         self.timerWidget.setText(f"Time: {self.time_elapsed}s")
 
+    def _startTimer(self):
+        """Start the question timer."""
+        import time
+        self.start_time = time.time()  # Store when timer started
+        self.time_elapsed = 0  # Reset to 0
+        self.timerWidget.setText(f"Time: {self.time_elapsed}s")
+        self.timer.start(1000)  # Timer ticks every second (1000ms)
+        
+    def _stopTimer(self):
+        """Stop the timer and return elapsed time."""
+        self.timer.stop()
+        return self.time_elapsed  # Return elapsed seconds
+    
     def on_submit(self):
         """Handle the submit button click."""
         user_answer = self.answerInput.text()
-        self.timer.stop()  # Stop timer when answer is submitted
-        self.game_manager.check_answer(user_answer)
+        elapsed = self._stopTimer()  # Get elapsed time
+        self.game_manager.check_answer(user_answer, elapsed)  # Pass it to game manager
 
