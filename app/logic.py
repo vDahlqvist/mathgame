@@ -1,4 +1,5 @@
 import time
+from sympy.parsing.latex import parse_latex
 
 
 class GameManager:
@@ -11,7 +12,7 @@ class GameManager:
         self.gui = gui
 
     def start_game(self):
-        """Start a new game and enable UI elements."""
+        """Start a new game and initialize game state by enabling and disabling relevant UI components."""
         print("Game started")
         if self.gui:
             self.gui._startTimer()
@@ -36,5 +37,7 @@ class GameManager:
             answer (str): The user's answer
             elapsed_time (int): Time taken to answer in seconds
         """
+        parsed_answer = parse_latex(answer)
         print(f"Checking answer: {answer}")
         print(f"Time taken: {elapsed_time} seconds")
+        print(f"Parsed answer: {parsed_answer}")
