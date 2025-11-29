@@ -1,5 +1,6 @@
 import time
 from sympy.parsing.latex import parse_latex
+from questions import QUESTIONS
 
 
 class GameManager:
