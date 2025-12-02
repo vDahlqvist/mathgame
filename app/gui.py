@@ -39,6 +39,7 @@ class MainWindow(QMainWindow):
         main_layout.addWidget(self._createAnswerArea())
         main_layout.addWidget(self._createButtonArea())
         main_layout.addWidget(self._createTimerArea())
+        main_layout.addWidget(self._createPointArea())
         main_layout.addStretch()
         
         central_widget.setLayout(main_layout)
@@ -66,6 +67,25 @@ class MainWindow(QMainWindow):
 
         newGameAction = self.startGameMenu.addAction("New Game")
         newGameAction.triggered.connect(self.game_manager.start_game)
+        # Adding subjects to menu
+        self.selectAlgebra = self.subjectMenu.addAction("Algebra")
+        self.selectEquations = self.subjectMenu.addAction("Equations")
+        self.selectCalculus = self.subjectMenu.addAction("Calculus")
+        # Setting subjects to checkable
+        self.selectAlgebra.setCheckable(True)
+        self.selectEquations.setCheckable(True)
+        self.selectCalculus.setCheckable(True)
+        # Adding levels to menu
+        self.selectEasy = self.levelMenu.addAction("Easy")
+        self.selectHard = self.levelMenu.addAction("Hard")
+        # Setting levels to checkable
+        self.selectEasy.setCheckable(True)
+        self.selectHard.setCheckable(True)
+        # Connect to update game manager when changed
+        self.selectAlgebra.triggered.connect(self.update_selected_subjects)
+        self.selectEquations.triggered.connect(self.update_selected_subjects)
+        self.selectCalculus.triggered.connect(self.update_selected_subjects)
+
 
 
 
@@ -146,6 +166,19 @@ class MainWindow(QMainWindow):
         
         return self.timerWidget
     
+    def _createPointArea(self):
+        """Create the points display area.
+
+        Returns:
+            QLabel: Label widget displaying the current points.
+        """
+        self.pointsWidget = QLabel(f"Points: 0")
+        font = self.pointsWidget.font()
+        font.setPointSize(20)
+        self.pointsWidget.setFont(font)
+        
+        return self.pointsWidget
+    
     def _updateTimer(self):
         """Update the timer display by counting up."""
         self.time_elapsed += 1
@@ -170,3 +203,15 @@ class MainWindow(QMainWindow):
         elapsed = self._stopTimer()  # Get elapsed time
         self.game_manager.check_answer(user_answer, elapsed)  # Pass it to game manager
 
+    def update_selected_subjects(self):
+        """Update the game manager with selected subjects."""
+        selected_subjects = []
+        if self.selectAlgebra.isChecked():
+            selected_subjects.append("algebra")
+        if self.selectEquations.isChecked():
+            selected_subjects.append("equations")
+        if self.selectCalculus.isChecked():
+            selected_subjects.append("calculus")
+
+        self.game_manager.set_subjects(selected_subjects)
+        
