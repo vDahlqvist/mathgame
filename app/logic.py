@@ -6,11 +6,29 @@ import math
 
 
 class GameManager:
+    """Manages the game logic and state for the math game.
+    
+    This class handles question selection, answer checking, score calculation,
+    and game flow control. It coordinates between the GUI and database components.
+    
+    Attributes:
+        gui (MainWindow): Reference to the main window GUI.
+        db (DatabaseManager): Reference to the database manager.
+        questions (dict): Dictionary of questions organized by subject and difficulty.
+        current_question (str): The currently displayed question in LaTeX format.
+        correct_answer (str): The correct answer to the current question.
+        selected_subjects (list): List of subjects selected by the player.
+        current_difficulty (str): Current difficulty level ("easy" or "hard").
+        current_points (int): Player's current score for this game session.
+        questions_completed (int): Number of questions answered correctly in this session.
+    """
+    
     def __init__(self, gui=None, db=None):
         """Initialize the game manager.
         
         Args:
-            gui (MainWindow): Reference to the main window GUI.
+            gui (MainWindow, optional): Reference to the main window GUI. Defaults to None.
+            db (DatabaseManager, optional): Reference to the database manager. Defaults to None.
         """
         self.gui = gui
         self.db = db
@@ -41,7 +59,11 @@ class GameManager:
         print(f"Selected subjects: {subjects}")
 
     def start_game(self):
-        """Start a new game and initialize game state by enabling and disabling relevant UI components."""
+        """Start a new game and initialize game state.
+        
+        Resets game counters and enables UI components for gameplay while disabling
+        menu options that shouldn't be changed during an active game.
+        """
         print("Game started")
         if self.gui:
             self.gui.questionWidget.setEnabled(True)
@@ -57,7 +79,12 @@ class GameManager:
         self.next_question()
 
     def next_question(self):
-        """Load and display the next question from selected subjects."""
+        """Load and display the next question from selected subjects.
+        
+        Randomly selects a subject from the player's chosen subjects, then picks
+        a random question at the current difficulty level. Updates the GUI with
+        the new question and starts the timer.
+        """
         
         if not self.selected_subjects:
             print("No subjects selected!")
@@ -83,11 +110,18 @@ class GameManager:
             self.gui._startTimer()
 
     def check_answer(self, answer, elapsed_time):
-        """Check the user's answer.
+        """Check the user's answer against the correct answer.
+        
+        Parses both the user's answer and the correct answer from LaTeX format
+        and compares them. If correct, calculates points and loads the next question.
+        If incorrect, restarts the timer for another attempt.
         
         Args:
-            answer (str): The user's answer
-            elapsed_time (int): Time taken to answer in seconds
+            answer (str): The user's answer in LaTeX format.
+            elapsed_time (int): Time taken to answer in seconds.
+            
+        Returns:
+            bool: True if the answer is correct, False otherwise.
         """
         try:
             parsed_answer = parse_latex(answer)
@@ -118,11 +152,15 @@ class GameManager:
             return False
         
     def calculate_points(self, elapsed_time, difficulty):
-        """Update player's score based on time and difficulty.
+        """Calculate points earned for a correct answer based on time and difficulty.
+        
+        Uses an exponential decay function to award more points for faster answers.
+        Base points are 50 for easy questions and 100 for hard questions, multiplied
+        by exp(-0.1 * elapsed_time).
         
         Args:
-            elapsed_time (int): Time taken to answer
-            difficulty (str): Question difficulty level
+            elapsed_time (int): Time taken to answer in seconds.
+            difficulty (str): Question difficulty level ("easy" or "hard").
         """
         print(f"Updating points for difficulty: {difficulty}, time: {elapsed_time}s")
         base_easy = 50
@@ -138,11 +176,21 @@ class GameManager:
         self.update_points(points)
     
     def update_points(self, points):
+        """Add points to the player's current score and update the display.
+        
+        Args:
+            points (int): Number of points to add to the current score.
+        """
         self.current_points = self.current_points + points
         if self.gui:
             self.gui.pointsWidget.setText(f"Points: {self.current_points}")
 
     def finish_game(self):
+        """End the current game session and optionally save the score.
+        
+        Disables game UI elements, re-enables menu options, stops the timer,
+        and prompts the player to save their score to the database.
+        """
         if self.gui:
             self.gui.questionWidget.setEnabled(False)
             self.gui.answerInput.setEnabled(False)
@@ -164,5 +212,10 @@ class GameManager:
                 print("score not saved")
         
     def save_score(self, player_name):
+        """Save the player's score to the database.
+        
+        Args:
+            player_name (str): The name of the player.
+        """
         self.db.save_score(player_name, self.current_points, self.current_difficulty, self.selected_subjects)
 

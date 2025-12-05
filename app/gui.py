@@ -237,20 +237,40 @@ class MainWindow(QMainWindow):
         return self.time_elapsed  # Return elapsed seconds
     
     def _restart_timer(self, elapsed_time):
+        """Restart the timer from a specific elapsed time.
+        
+        Used when the player gives an incorrect answer and needs to try again
+        without resetting the timer to zero.
+        
+        Args:
+            elapsed_time (int): The elapsed time in seconds to continue from.
+        """
         self.start_time = elapsed_time
         self.timer.start(1000)
     
     def on_submit(self):
-        """Handle the submit button click."""
+        """Handle the submit button click.
+        
+        Retrieves the user's answer from the input field, stops the timer,
+        and passes the answer to the game manager for validation.
+        """
         user_answer = self.answerInput.text()
         elapsed = self._stopTimer()  # Get elapsed time
         self.game_manager.check_answer(user_answer, elapsed)  # Pass it to game manager
 
     def on_skip(self):
+        """Handle the skip button click.
+        
+        Loads the next question without checking the current answer.
+        """
         self.game_manager.next_question()
 
     def update_selected_subjects(self):
-        """Update the game manager with selected subjects."""
+        """Update the game manager with selected subjects.
+        
+        Reads the checkbox states from the subject menu and passes the list of
+        selected subjects to the game manager.
+        """
         selected_subjects = []
         if self.selectAlgebra.isChecked():
             selected_subjects.append("algebra")
@@ -262,6 +282,11 @@ class MainWindow(QMainWindow):
         self.game_manager.set_subjects(selected_subjects)
 
     def update_selected_difficulty(self):
+        """Update the game manager with selected difficulty level.
+        
+        Reads the checkbox states from the level menu and passes the selected
+        difficulty to the game manager.
+        """
         current_difficulty = None
         if self.selectEasy.isChecked():
             current_difficulty = "easy"
@@ -293,6 +318,11 @@ class MainWindow(QMainWindow):
         
 
     def open_scoreboard(self):
+        """Open the scoreboard window.
+        
+        Creates a new Scoreboard window if one doesn't exist, then shows and
+        raises it to the front.
+        """
         if self.scoreboard_window is None:
             self.scoreboard_window = Scoreboard()
         self.scoreboard_window.show()
@@ -300,7 +330,17 @@ class MainWindow(QMainWindow):
 
 
 class Scoreboard(QWidget):
+    """Window displaying the high scores table.
+    
+    This widget shows all saved scores from the database in a sortable table
+    format, including player names, scores, difficulty, subject, and date.
+    
+    Attributes:
+        table (QTableWidget): The table widget displaying score data.
+    """
+    
     def __init__(self):
+        """Initialize the scoreboard window and load scores from the database."""
         super().__init__()
         self.setWindowTitle("Scoreboard")
         self.resize(700, 400)
@@ -313,6 +353,12 @@ class Scoreboard(QWidget):
         self.load_scores()
 
     def load_scores(self):
+        """Load and display scores from the database.
+        
+        Queries the database for all scores, sorted by score in descending order,
+        and populates the table widget with the results. Each row contains the
+        player's name, score, difficulty, subject, and date.
+        """
         import sqlite3
         conn = sqlite3.connect("scores.db")
         cursor = conn.cursor()
