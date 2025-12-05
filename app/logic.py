@@ -1,6 +1,7 @@
 import time
 from sympy.parsing.latex import parse_latex
 from questions import QUESTIONS
+import random
 
 
 class GameManager:
@@ -14,7 +15,7 @@ class GameManager:
         self.questions = QUESTIONS
         self.current_question = None
         self.correct_answer = None
-        self.selected_subjects = ["algebra"] # default value
+        self.selected_subjects = ["algebra"]  # Default
 
     def set_subjects(self, subjects):
         """Set the selected subjects for the game.
@@ -38,12 +39,11 @@ class GameManager:
             self.gui.startGameMenu.setEnabled(False)
             self.gui.seeScoresMenu.setEnabled(False)
             self.gui.endGameMenu.setEnabled(True)
-        self.next_question()
             
+        self.next_question()
 
     def next_question(self):
         """Load and display the next question from selected subjects."""
-        import random
         
         if not self.selected_subjects:
             print("No subjects selected!")
@@ -63,10 +63,10 @@ class GameManager:
         self.correct_answer = question_data["answer"]
         
         if self.gui:
-            self.gui.questionWidget.setText(self.current_question)
+            # Use the new update method instead of setText
+            self.gui.update_question_display(self.current_question)
             self.gui.answerInput.clear()
             self.gui._startTimer()
-        
 
     def check_answer(self, answer, elapsed_time):
         """Check the user's answer.
@@ -75,8 +75,21 @@ class GameManager:
             answer (str): The user's answer
             elapsed_time (int): Time taken to answer in seconds
         """
-        parsed_answer = parse_latex(answer)
-        print(f"Checking answer: {answer}")
-        print(f"Time taken: {elapsed_time} seconds")
-        print(f"Parsed answer: {parsed_answer}")
-        self.next_question()
+        try:
+            parsed_answer = parse_latex(answer)
+            parsed_correct = parse_latex(self.correct_answer)
+            
+            is_correct = parsed_answer == parsed_correct
+            
+            print(f"User answer: {answer} -> {parsed_answer}")
+            print(f"Correct answer: {self.correct_answer} -> {parsed_correct}")
+            print(f"Time taken: {elapsed_time} seconds")
+            print(f"Result: {'Correct!' if is_correct else 'Incorrect'}")
+            
+            # Load next question after checking
+            self.next_question()
+            
+            return is_correct
+        except Exception as e:
+            print(f"Error parsing answer: {e}")
+            return False

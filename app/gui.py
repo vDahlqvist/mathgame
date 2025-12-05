@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import QMainWindow, QMenuBar, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QPushButton
-from PyQt5.QtCore import Qt, QTimer
+from PyQt5.QtCore import Qt, QTimer, QUrl
+from PyQt5.QtWebEngineWidgets import QWebEngineView
 from logic import GameManager
 
 class MainWindow(QMainWindow):
@@ -32,6 +33,9 @@ class MainWindow(QMainWindow):
         # Create central widget and main layout
         central_widget = QWidget()
         main_layout = QVBoxLayout()
+
+        self.questionBrowser = QWebEngineView()
+        main_layout.addWidget(self.questionBrowser)
         
         # Add different sections
         self._createMenuBar()
@@ -91,21 +95,46 @@ class MainWindow(QMainWindow):
 
 
     def _createQuestionArea(self, question):
-        """Create the question display area.
+        """Create the question display area with LaTeX rendering.
         
         Args:
-            question (str): The math question to display.
+            question (str): The LaTeX math question to display.
             
         Returns:
-            QLabel: The label widget containing the question text.
+            QWebEngineView: The web view widget containing the rendered question.
         """
-        self.questionWidget = QLabel(question)
-        self.questionWidget.setAlignment(Qt.AlignCenter)
-        font = self.questionWidget.font()
-        font.setPointSize(30)
-        self.questionWidget.setFont(font)
+        self.questionWidget = QWebEngineView()
+        self.questionWidget.setMinimumHeight(150)  # Set minimum height
         self.questionWidget.setEnabled(False)  # Disabled until game starts
+        
+        # Load initial empty question
+        self.update_question_display(question)
+        
         return self.questionWidget
+    
+    def update_question_display(self, latex_question):
+        """Update the question display with LaTeX rendering.
+        
+        Args:
+            latex_question (str): LaTeX formatted question string.
+        """
+        html = f"""
+        <html>
+        <head>
+            <script>
+                window.MathJax = {{
+                    tex: {{inlineMath: [['$','$'], ['\\\\(','\\\\)']]}}
+                }};
+            </script>
+            <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+        </head>
+        <body style="font-size: 30px; padding: 20px; text-align: center; font-family: Arial;">
+            <p><b>Question:</b></p>
+            <p>\\({latex_question}\\)</p>
+        </body>
+        </html>
+        """
+        self.questionWidget.setHtml(html)
     
     def _createAnswerArea(self):
         """Create the answer input field.
@@ -214,4 +243,4 @@ class MainWindow(QMainWindow):
             selected_subjects.append("calculus")
 
         self.game_manager.set_subjects(selected_subjects)
-        
+
