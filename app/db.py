@@ -23,4 +23,13 @@ class DatabaseManager:
         ''', (name, score, difficulty, subject))
         conn.commit()
         conn.close()
+    def get_scores(self):
+        conn = sqlite3.connect('scores.db')
+        c = conn.cursor()
+        c.execute('''
+            SELECT * FROM scores
+        ''')
+        scores = c.fetchall()
+        conn.close()
+        return scores
 

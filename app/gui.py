@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QMenuBar, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QPushButton
+from PyQt5.QtWidgets import QMainWindow, QMenuBar, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QInputDialog, QTableWidgetItem, QTableWidget
 from PyQt5.QtCore import Qt, QTimer, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from logic import GameManager
@@ -25,6 +25,8 @@ class MainWindow(QMainWindow):
         self.start_time = 0
         self.timer = QTimer()
         self.timer.timeout.connect(self._updateTimer)
+        self.scoreboard_window = None
+
 
         self.game_manager = GameManager(gui=self)  # Pass self reference
         # Create the main layout first
@@ -95,6 +97,12 @@ class MainWindow(QMainWindow):
         self.selectAlgebra.triggered.connect(self.update_selected_subjects)
         self.selectEquations.triggered.connect(self.update_selected_subjects)
         self.selectCalculus.triggered.connect(self.update_selected_subjects)
+
+        self.endGame = self.endGameMenu.addAction("Quit game")
+        self.endGame.triggered.connect(self.game_manager.finish_game)
+
+        self.selectEasy.triggered.connect(self.update_selected_difficulty)
+        self.selectHard.triggered.connect(self.update_selected_difficulty)
 
 
 
@@ -252,4 +260,77 @@ class MainWindow(QMainWindow):
             selected_subjects.append("calculus")
 
         self.game_manager.set_subjects(selected_subjects)
+
+    def update_selected_difficulty(self):
+        current_difficulty = None
+        if self.selectEasy.isChecked():
+            current_difficulty = "easy"
+        if self.selectHard.isChecked():
+            current_difficulty = "hard"
+        self.game_manager.set_difficulty(current_difficulty)
+
+
+    def show_save_score_dialog(self):
+        """Show dialog to save player's score.
+        
+        Returns:
+            str or None: Player's name if they chose to save, None if cancelled.
+        """
+        name, ok = QInputDialog.getText(
+            self,
+            "Spara Resultat",
+            "Namn:",
+            QLineEdit.Normal,
+            ""
+        )
+        
+        if ok and name:
+            # User clicked "Spara" and entered a name
+            return name
+        else:
+            # User clicked "Spara inte" or cancelled
+            return None
+        
+
+    def open_scoreboard(self):
+        if self.scoreboard_window is None:
+            self.scoreboard_window = Scoreboard()
+        self.scoreboard_window.show()
+        self.scoreboard_window.raise_()
+
+
+class Scoreboard(QWidget):
+    def __init__(self):
+        super().__init__()
+        self.setWindowTitle("Scoreboard")
+        self.resize(700, 400)
+
+        layout = QVBoxLayout(self)
+        self.table = QTableWidget()
+        layout.addWidget(self.table)
+        
+
+        self.load_scores()
+
+    def load_scores(self):
+        import sqlite3
+        conn = sqlite3.connect("scores.db")
+        cursor = conn.cursor()
+        cursor.execute("""
+            SELECT name, score, difficulty, subject, date
+            FROM scores ORDER BY score DESC
+        """)
+        rows = cursor.fetchall()
+
+        self.table.setRowCount(len(rows))
+        self.table.setColumnCount(5)
+        self.table.setHorizontalHeaderLabels(
+            ["Name", "Score", "Difficulty", "Subject", "Date"]
+        )
+
+        for r, row in enumerate(rows):
+            for c, val in enumerate(row):
+                self.table.setItem(r, c, QTableWidgetItem(str(val)))
+
+        self.table.resizeColumnsToContents()
 

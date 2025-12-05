@@ -6,25 +6,27 @@ import math
 
 
 class GameManager:
-    def __init__(self, gui=None):
+    def __init__(self, gui=None, db=None):
         """Initialize the game manager.
         
         Args:
             gui (MainWindow): Reference to the main window GUI.
         """
         self.gui = gui
+        self.db = db
         self.questions = QUESTIONS
         self.current_question = None
         self.correct_answer = None
         self.selected_subjects = ["algebra"]  # Default
         self.current_difficulty = "easy" # Default value
         self.current_points = 0
+        self.questions_completed = 0
 
     def set_difficulty(self, difficulty):
         """Set the difficulty level for the game.
         
         Args:
-            difficulty (str): Difficulty level ("easy", "medium", or "hard")
+            difficulty (str): Difficulty level ("easy" or "hard")
         """
         self.current_difficulty = difficulty
         print(f"Difficulty set to: {difficulty}")
@@ -100,7 +102,11 @@ class GameManager:
 
             if is_correct:
                 self.calculate_points(elapsed_time, self.current_difficulty)
-                self.next_question() # Load next question if correct answer
+                self.questions_completed +=1
+                if self.questions_completed >= 10:
+                    self.finish_game() # if 10 questions have been answered, end round
+                else:
+                    self.next_question() # Load next question if correct answer
             elif not is_correct:
                 if self.gui:
                     self.gui._restart_timer(elapsed_time)
@@ -135,3 +141,28 @@ class GameManager:
         self.current_points = self.current_points + points
         if self.gui:
             self.gui.pointsWidget.setText(f"Points: {self.current_points}")
+
+    def finish_game(self):
+        if self.gui:
+            self.gui.questionWidget.setEnabled(False)
+            self.gui.answerInput.setEnabled(False)
+            self.gui.submitButton.setEnabled(False)
+            self.gui.skipButton.setEnabled(False)
+            self.gui.levelMenu.setEnabled(True)
+            self.gui.subjectMenu.setEnabled(True)
+            self.gui.startGameMenu.setEnabled(True)
+            self.gui.seeScoresMenu.setEnabled(True)
+            self.gui.endGameMenu.setEnabled(False)
+            self.gui._stopTimer()
+
+            player_name = self.gui.show_save_score_dialog()
+
+            if player_name:
+                print(f"Saving score for {player_name}: {self.current_points} points, at {self.current_difficulty} difficulty, in {self.selected_subjects}")
+                # call score saving function here
+            else:
+                print("score not saved")
+        
+    def save_score(self, player_name):
+        self.db.save_score(player_name, self.current_points, self.current_difficulty, self.selected_subjects)
+
