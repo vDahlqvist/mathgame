@@ -2,6 +2,7 @@ import time
 from sympy.parsing.latex import parse_latex
 from questions import QUESTIONS
 import random
+import math
 
 
 class GameManager:
@@ -16,6 +17,17 @@ class GameManager:
         self.current_question = None
         self.correct_answer = None
         self.selected_subjects = ["algebra"]  # Default
+        self.current_difficulty = "easy" # Default value
+        self.current_points = 0
+
+    def set_difficulty(self, difficulty):
+        """Set the difficulty level for the game.
+        
+        Args:
+            difficulty (str): Difficulty level ("easy", "medium", or "hard")
+        """
+        self.current_difficulty = difficulty
+        print(f"Difficulty set to: {difficulty}")
 
     def set_subjects(self, subjects):
         """Set the selected subjects for the game.
@@ -53,7 +65,7 @@ class GameManager:
         subject = random.choice(self.selected_subjects)
         
         # Pick a random difficulty (you can make this selectable too)
-        difficulty = "easy"
+        difficulty = self.current_difficulty
         
         # Pick a random question
         questions_list = self.questions[subject][difficulty]
@@ -79,17 +91,47 @@ class GameManager:
             parsed_answer = parse_latex(answer)
             parsed_correct = parse_latex(self.correct_answer)
             
-            is_correct = parsed_answer == parsed_correct
+            is_correct = parsed_answer == parsed_correct # boolean returning true or false depending on if answer is correct or not
             
             print(f"User answer: {answer} -> {parsed_answer}")
             print(f"Correct answer: {self.correct_answer} -> {parsed_correct}")
             print(f"Time taken: {elapsed_time} seconds")
             print(f"Result: {'Correct!' if is_correct else 'Incorrect'}")
-            
-            # Load next question after checking
-            self.next_question()
+
+            if is_correct:
+                self.calculate_points(elapsed_time, self.current_difficulty)
+                self.next_question() # Load next question if correct answer
+            elif not is_correct:
+                if self.gui:
+                    self.gui._restart_timer(elapsed_time)
+                    self.gui.answerInput.clear()
             
             return is_correct
         except Exception as e:
             print(f"Error parsing answer: {e}")
             return False
+        
+    def calculate_points(self, elapsed_time, difficulty):
+        """Update player's score based on time and difficulty.
+        
+        Args:
+            elapsed_time (int): Time taken to answer
+            difficulty (str): Question difficulty level
+        """
+        print(f"Updating points for difficulty: {difficulty}, time: {elapsed_time}s")
+        base_easy = 50
+        base_hard = 100
+        k = 0.1
+        multiplier = math.exp(-k * elapsed_time)
+        if difficulty == "easy":
+            points  = base_easy * multiplier
+        if difficulty == "hard":
+            points = base_hard * multiplier
+        points = int(points) # Round to whole number
+        print(f"Points for this question: {points}, with difficulty: {difficulty} and time: {elapsed_time}")
+        self.update_points(points)
+    
+    def update_points(self, points):
+        self.current_points = self.current_points + points
+        if self.gui:
+            self.gui.pointsWidget.setText(f"Points: {self.current_points}")

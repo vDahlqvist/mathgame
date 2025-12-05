@@ -20,6 +20,12 @@ class MainWindow(QMainWindow):
         """Initialize the main window and create the user interface."""
         super().__init__()
 
+        # Initialize timer variables BEFORE creating UI
+        self.time_elapsed = 0
+        self.start_time = 0
+        self.timer = QTimer()
+        self.timer.timeout.connect(self._updateTimer)
+
         self.game_manager = GameManager(gui=self)  # Pass self reference
         # Create the main layout first
         self._createUI()
@@ -165,6 +171,7 @@ class MainWindow(QMainWindow):
         self.submitButton = QPushButton("Submit")
         self.submitButton.clicked.connect(self.on_submit)
         self.skipButton = QPushButton("Skip")
+        self.skipButton.clicked.connect(self.on_skip)
         
         button_layout.addStretch()
         button_layout.addWidget(self.submitButton)
@@ -182,11 +189,6 @@ class MainWindow(QMainWindow):
         Returns:
             QLabel: Label widget displaying the elapsed time.
         """
-        self.timer = QTimer()
-        self.timer.timeout.connect(self._updateTimer)
-        
-        self.time_elapsed = 0  # Start at 0 seconds
-        self.start_time = 0  # Store start time
         self.timerWidget = QLabel(f"Time: {self.time_elapsed}s")
         self.timerWidget.setAlignment(Qt.AlignCenter)
         font = self.timerWidget.font()
@@ -226,11 +228,18 @@ class MainWindow(QMainWindow):
         self.timer.stop()
         return self.time_elapsed  # Return elapsed seconds
     
+    def _restart_timer(self, elapsed_time):
+        self.start_time = elapsed_time
+        self.timer.start(1000)
+    
     def on_submit(self):
         """Handle the submit button click."""
         user_answer = self.answerInput.text()
         elapsed = self._stopTimer()  # Get elapsed time
         self.game_manager.check_answer(user_answer, elapsed)  # Pass it to game manager
+
+    def on_skip(self):
+        self.game_manager.next_question()
 
     def update_selected_subjects(self):
         """Update the game manager with selected subjects."""
