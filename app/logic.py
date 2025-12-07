@@ -203,20 +203,18 @@ class GameManager:
             self.gui.seeScoresMenu.setEnabled(True)
             self.gui.endGameMenu.setEnabled(False)
             self.gui._stopTimer()
+            self.gui.show_save_score_dialog()
 
-            player_name = self.gui.show_save_score_dialog()
-
-            if player_name:
-                print(f"Saving score for {player_name}: {self.current_points} points, at {self.current_difficulty} difficulty, in {self.selected_subjects}")
-                # call score saving function here
-            else:
-                print("score not saved")
+            
         
     def save_score(self, player_name):
-        """Save the player's score to the database.
+        """Convert list of subjects to a string and save the player's score to the database.
         
         Args:
             player_name (str): The name of the player.
         """
-        self.db.save_score(player_name, self.current_points, self.current_difficulty, self.selected_subjects)
+        selected_subjects_str = ", ".join(self.selected_subjects)
+        self.db.save_score(player_name, self.current_points, self.current_difficulty, selected_subjects_str)
+        print(f"Saving score for {player_name}: {self.current_points} points, at {self.current_difficulty} difficulty, in {self.selected_subjects}")
+
 
