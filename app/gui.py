@@ -311,7 +311,7 @@ class MainWindow(QMainWindow):
         
         if ok and name:
             # User clicked "Spara" and entered a name
-            return name
+            self.game_manager.save_score(name)
         else:
             # User clicked "Spara inte" or cancelled
             return None

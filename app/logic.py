@@ -3,6 +3,7 @@ from sympy.parsing.latex import parse_latex
 from questions import QUESTIONS
 import random
 import math
+from db import DatabaseManager
 
 
 class GameManager:
@@ -31,7 +32,7 @@ class GameManager:
             db (DatabaseManager, optional): Reference to the database manager. Defaults to None.
         """
         self.gui = gui
-        self.db = db
+        self.db = DatabaseManager()
         self.questions = QUESTIONS
         self.current_question = None
         self.correct_answer = None

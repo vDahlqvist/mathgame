@@ -4,6 +4,7 @@ This module initializes the PyQt5 application and creates the main window.
 """
 
 import sys
+import os
 from PyQt5.QtWidgets import QApplication
 from gui import MainWindow
 
@@ -15,13 +16,32 @@ def main():
     """
     # Skapa applikationsobjektet (måste finnas i varje PyQt app)
     app = QApplication(sys.argv)
-
+    apply_stylesheet(app)
     # Skapa ditt huvudfönster
     window = MainWindow()
     window.show()
 
     # Starta event-loopen
     sys.exit(app.exec_())
+
+def apply_stylesheet(app, filename="style.qss"):
+    """Apply QSS stylesheet to the application.
+    
+    Args:
+        app (QApplication): The application instance
+        filename (str): Name of the stylesheet file
+    """
+    # Get the directory where main.py is located
+    script_dir = os.path.dirname(os.path.abspath(__file__))
+    # Build full path to style.qss
+    style_path = os.path.join(script_dir, filename)
+    
+    try:
+        with open(style_path, "r") as f:
+            app.setStyleSheet(f.read())
+    except FileNotFoundError:
+        print(f"Warning: Could not find stylesheet at {style_path}")
+
 
 if __name__ == "__main__":
     main()
