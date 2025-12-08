@@ -1,0 +1,2 @@
+[console_scripts]
+mathgame = app.main:main

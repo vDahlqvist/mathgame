@@ -1,0 +1,76 @@
+[build-system]
+requires = ["setuptools>=45", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "mathgame"
+version = "0.1.0"
+description = "An interactive math game with multiple difficulty levels and subjects"
+readme = "README.md"
+requires-python = ">=3.8"
+license = {text = "LGPL-3.0-or-later"}
+authors = [
+    {name = "Vilmer Dahlqvist", email = "vilmer.dahlqvist@elev.ntig.se"}
+]
+maintainers = [
+    {name = "Vilmer Dahlqvist", email = "vilmer.dahlqvist@elev.ntig.se"}
+]
+keywords = ["math", "game", "education", "pyqt5", "quiz"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Education",
+    "Topic :: Education",
+    "Topic :: Games/Entertainment :: Puzzle Games",
+    "License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+
+dependencies = [
+    "PyQt5>=5.15.0",
+    "PyQtWebEngine>=5.15.0",
+    "sympy>=1.12",
+    "antlr4-python3-runtime==4.11",
+]
+
+[project.optional-dependencies]
+dev = [
+    "sphinx>=7.0.0",
+    "sphinx-rtd-theme>=2.0.0",
+    "sphinx-autodoc-typehints>=1.24.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/vDahlqvist/mathgame"
+Repository = "https://github.com/vDahlqvist/mathgame"
+"Bug Tracker" = "https://github.com/vDahlqvist/mathgame/issues"
+
+[project.scripts]
+mathgame = "app.main:main"
+
+[tool.setuptools]
+packages = ["app"]
+
+[tool.setuptools.package-data]
+app = ["*.qss", "data/*.py"]
+
+# Sphinx documentation configuration
+[tool.sphinx]
+source-dir = "docs/source"
+build-dir = "docs/build"
+
+# Black code formatter configuration (optional)
+[tool.black]
+line-length = 100
+target-version = ['py38', 'py39', 'py310', 'py311']
+
+# pytest configuration (optional, for future testing)
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
