@@ -1,0 +1,9 @@
+PyQt5>=5.15.0
+PyQtWebEngine>=5.15.0
+sympy>=1.12
+antlr4-python3-runtime==4.11
+
+[dev]
+sphinx>=7.0.0
+sphinx-rtd-theme>=2.0.0
+sphinx-autodoc-typehints>=1.24.0

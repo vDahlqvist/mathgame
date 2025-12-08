@@ -1,0 +1,15 @@
+pyproject.toml
+app/__init__.py
+app/db.py
+app/gui.py
+app/logic.py
+app/main.py
+app/questions.py
+app/style.qss
+app/data/questions.py
+mathgame.egg-info/PKG-INFO
+mathgame.egg-info/SOURCES.txt
+mathgame.egg-info/dependency_links.txt
+mathgame.egg-info/entry_points.txt
+mathgame.egg-info/requires.txt
+mathgame.egg-info/top_level.txt

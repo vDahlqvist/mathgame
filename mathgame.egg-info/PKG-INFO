@@ -1,0 +1,32 @@
+Metadata-Version: 2.4
+Name: mathgame
+Version: 0.1.0
+Summary: An interactive math game with multiple difficulty levels and subjects
+Author-email: Vilmer Dahlqvist <vilmer.dahlqvist@elev.ntig.se>
+Maintainer-email: Vilmer Dahlqvist <vilmer.dahlqvist@elev.ntig.se>
+License: LGPL-3.0-or-later
+Project-URL: Homepage, https://github.com/vDahlqvist/mathgame
+Project-URL: Repository, https://github.com/vDahlqvist/mathgame
+Project-URL: Bug Tracker, https://github.com/vDahlqvist/mathgame/issues
+Keywords: math,game,education,pyqt5,quiz
+Classifier: Development Status :: 3 - Alpha
+Classifier: Intended Audience :: Education
+Classifier: Topic :: Education
+Classifier: Topic :: Games/Entertainment :: Puzzle Games
+Classifier: License :: OSI Approved :: GNU Lesser General Public License v3 or later (LGPLv3+)
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Programming Language :: Python :: 3.9
+Classifier: Programming Language :: Python :: 3.10
+Classifier: Programming Language :: Python :: 3.11
+Classifier: Programming Language :: Python :: 3.12
+Requires-Python: >=3.8
+Description-Content-Type: text/markdown
+Requires-Dist: PyQt5>=5.15.0
+Requires-Dist: PyQtWebEngine>=5.15.0
+Requires-Dist: sympy>=1.12
+Requires-Dist: antlr4-python3-runtime==4.11
+Provides-Extra: dev
+Requires-Dist: sphinx>=7.0.0; extra == "dev"
+Requires-Dist: sphinx-rtd-theme>=2.0.0; extra == "dev"
+Requires-Dist: sphinx-autodoc-typehints>=1.24.0; extra == "dev"
