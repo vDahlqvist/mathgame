@@ -29,14 +29,17 @@ jobs:
           python-version: '3.x'
 
       - name: Install Dependencies
-        # Install Sphinx and any extensions/themes you need
-        run: pip install sphinx sphinx-rtd-theme
+        # Install project dependencies and Sphinx
+        run: |
+          pip install --upgrade pip
+          pip install sphinx sphinx-rtd-theme sphinx-autodoc-typehints
+          pip install PyQt5 PyQtWebEngine sympy antlr4-python3-runtime==4.11
 
       - name: Run Sphinx Build
         # Assumes your docs source is in the 'docs' directory
         run: |
           cd docs
-          sphinx-build -b html . _build
+          sphinx-build -b html . _build/html
         
       # Configure GitHub Pages environment
       - name: Setup Pages
