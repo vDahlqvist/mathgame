@@ -1,0 +1,351 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.logic &mdash; Math game with LaTeX input  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Math game with LaTeX input
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Math game with LaTeX input</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">app.logic</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for app.logic</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">sympy.parsing.latex</span><span class="w"> </span><span class="kn">import</span> <span class="n">parse_latex</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">questions</span><span class="w"> </span><span class="kn">import</span> <span class="n">QUESTIONS</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">random</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">db</span><span class="w"> </span><span class="kn">import</span> <span class="n">DatabaseManager</span>
+
+
+<div class="viewcode-block" id="GameManager">
+<a class="viewcode-back" href="../../app.html#app.logic.GameManager">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">GameManager</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Manages the game logic and state for the math game.</span>
+<span class="sd">    </span>
+<span class="sd">    This class handles question selection, answer checking, score calculation,</span>
+<span class="sd">    and game flow control. It coordinates between the GUI and database components.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        gui (MainWindow): Reference to the main window GUI.</span>
+<span class="sd">        db (DatabaseManager): Reference to the database manager.</span>
+<span class="sd">        questions (dict): Dictionary of questions organized by subject and difficulty.</span>
+<span class="sd">        current_question (str): The currently displayed question in LaTeX format.</span>
+<span class="sd">        correct_answer (str): The correct answer to the current question.</span>
+<span class="sd">        selected_subjects (list): List of subjects selected by the player.</span>
+<span class="sd">        current_difficulty (str): Current difficulty level (&quot;easy&quot; or &quot;hard&quot;).</span>
+<span class="sd">        current_points (int): Player&#39;s current score for this game session.</span>
+<span class="sd">        questions_completed (int): Number of questions answered correctly in this session.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="GameManager.__init__">
+<a class="viewcode-back" href="../../app.html#app.logic.GameManager.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">gui</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">db</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the game manager.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            gui (MainWindow, optional): Reference to the main window GUI. Defaults to None.</span>
+<span class="sd">            db (DatabaseManager, optional): Reference to the database manager. Defaults to None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gui</span> <span class="o">=</span> <span class="n">gui</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span> <span class="o">=</span> <span class="n">DatabaseManager</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">questions</span> <span class="o">=</span> <span class="n">QUESTIONS</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_question</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">correct_answer</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selected_subjects</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;algebra&quot;</span><span class="p">]</span>  <span class="c1"># Default</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_difficulty</span> <span class="o">=</span> <span class="s2">&quot;easy&quot;</span> <span class="c1"># Default value</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_points</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">questions_completed</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="GameManager.set_difficulty">
+<a class="viewcode-back" href="../../app.html#app.logic.GameManager.set_difficulty">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_difficulty</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">difficulty</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the difficulty level for the game.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            difficulty (str): Difficulty level (&quot;easy&quot; or &quot;hard&quot;)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_difficulty</span> <span class="o">=</span> <span class="n">difficulty</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Difficulty set to: </span><span class="si">{</span><span class="n">difficulty</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GameManager.set_subjects">
+<a class="viewcode-back" href="../../app.html#app.logic.GameManager.set_subjects">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">set_subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">subjects</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Set the selected subjects for the game.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            subjects (list): List of subject names (e.g., [&quot;algebra&quot;, &quot;equations&quot;])</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selected_subjects</span> <span class="o">=</span> <span class="n">subjects</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Selected subjects: </span><span class="si">{</span><span class="n">subjects</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GameManager.start_game">
+<a class="viewcode-back" href="../../app.html#app.logic.GameManager.start_game">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">start_game</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start a new game and initialize game state.</span>
+<span class="sd">        </span>
+<span class="sd">        Resets game counters and enables UI components for gameplay while disabling</span>
+<span class="sd">        menu options that shouldn&#39;t be changed during an active game.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Game started&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">questionWidget</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">answerInput</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">submitButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">skipButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">levelMenu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">subjectMenu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">startGameMenu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">seeScoresMenu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">endGameMenu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            
+        <span class="bp">self</span><span class="o">.</span><span class="n">next_question</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GameManager.next_question">
+<a class="viewcode-back" href="../../app.html#app.logic.GameManager.next_question">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">next_question</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load and display the next question from selected subjects.</span>
+<span class="sd">        </span>
+<span class="sd">        Randomly selects a subject from the player&#39;s chosen subjects, then picks</span>
+<span class="sd">        a random question at the current difficulty level. Updates the GUI with</span>
+<span class="sd">        the new question and starts the timer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">selected_subjects</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;No subjects selected!&quot;</span><span class="p">)</span>
+            <span class="k">return</span>
+            
+        <span class="c1"># Pick a random subject from selected ones</span>
+        <span class="n">subject</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_subjects</span><span class="p">)</span>
+        
+        <span class="c1"># Pick a random difficulty (you can make this selectable too)</span>
+        <span class="n">difficulty</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_difficulty</span>
+        
+        <span class="c1"># Pick a random question</span>
+        <span class="n">questions_list</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">questions</span><span class="p">[</span><span class="n">subject</span><span class="p">][</span><span class="n">difficulty</span><span class="p">]</span>
+        <span class="n">question_data</span> <span class="o">=</span> <span class="n">random</span><span class="o">.</span><span class="n">choice</span><span class="p">(</span><span class="n">questions_list</span><span class="p">)</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_question</span> <span class="o">=</span> <span class="n">question_data</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">correct_answer</span> <span class="o">=</span> <span class="n">question_data</span><span class="p">[</span><span class="s2">&quot;answer&quot;</span><span class="p">]</span>
+        
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="p">:</span>
+            <span class="c1"># Use the new update method instead of setText</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">update_question_display</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">current_question</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">answerInput</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">_startTimer</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="GameManager.check_answer">
+<a class="viewcode-back" href="../../app.html#app.logic.GameManager.check_answer">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">check_answer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">answer</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Check the user&#39;s answer against the correct answer.</span>
+<span class="sd">        </span>
+<span class="sd">        Parses both the user&#39;s answer and the correct answer from LaTeX format</span>
+<span class="sd">        and compares them. If correct, calculates points and loads the next question.</span>
+<span class="sd">        If incorrect, restarts the timer for another attempt.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            answer (str): The user&#39;s answer in LaTeX format.</span>
+<span class="sd">            elapsed_time (int): Time taken to answer in seconds.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: True if the answer is correct, False otherwise.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">parsed_answer</span> <span class="o">=</span> <span class="n">parse_latex</span><span class="p">(</span><span class="n">answer</span><span class="p">)</span>
+            <span class="n">parsed_correct</span> <span class="o">=</span> <span class="n">parse_latex</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">correct_answer</span><span class="p">)</span>
+            
+            <span class="n">is_correct</span> <span class="o">=</span> <span class="n">parsed_answer</span> <span class="o">==</span> <span class="n">parsed_correct</span> <span class="c1"># boolean returning true or false depending on if answer is correct or not</span>
+            
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User answer: </span><span class="si">{</span><span class="n">answer</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">parsed_answer</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Correct answer: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">correct_answer</span><span class="si">}</span><span class="s2"> -&gt; </span><span class="si">{</span><span class="n">parsed_correct</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time taken: </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">}</span><span class="s2"> seconds&quot;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Result: </span><span class="si">{</span><span class="s1">&#39;Correct!&#39;</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">is_correct</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">&#39;Incorrect&#39;</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">is_correct</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">calculate_points</span><span class="p">(</span><span class="n">elapsed_time</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_difficulty</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">questions_completed</span> <span class="o">+=</span><span class="mi">1</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">questions_completed</span> <span class="o">&gt;=</span> <span class="mi">10</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">finish_game</span><span class="p">()</span> <span class="c1"># if 10 questions have been answered, end round</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">next_question</span><span class="p">()</span> <span class="c1"># Load next question if correct answer</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">is_correct</span><span class="p">:</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">_restart_timer</span><span class="p">(</span><span class="n">elapsed_time</span><span class="p">)</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">answerInput</span><span class="o">.</span><span class="n">clear</span><span class="p">()</span>
+            
+            <span class="k">return</span> <span class="n">is_correct</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Error parsing answer: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="kc">False</span></div>
+
+        
+<div class="viewcode-block" id="GameManager.calculate_points">
+<a class="viewcode-back" href="../../app.html#app.logic.GameManager.calculate_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">calculate_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">,</span> <span class="n">difficulty</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Calculate points earned for a correct answer based on time and difficulty.</span>
+<span class="sd">        </span>
+<span class="sd">        Uses an exponential decay function to award more points for faster answers.</span>
+<span class="sd">        Base points are 50 for easy questions and 100 for hard questions, multiplied</span>
+<span class="sd">        by exp(-0.1 * elapsed_time).</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            elapsed_time (int): Time taken to answer in seconds.</span>
+<span class="sd">            difficulty (str): Question difficulty level (&quot;easy&quot; or &quot;hard&quot;).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Updating points for difficulty: </span><span class="si">{</span><span class="n">difficulty</span><span class="si">}</span><span class="s2">, time: </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="n">base_easy</span> <span class="o">=</span> <span class="mi">50</span>
+        <span class="n">base_hard</span> <span class="o">=</span> <span class="mi">100</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">multiplier</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">k</span> <span class="o">*</span> <span class="n">elapsed_time</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">difficulty</span> <span class="o">==</span> <span class="s2">&quot;easy&quot;</span><span class="p">:</span>
+            <span class="n">points</span>  <span class="o">=</span> <span class="n">base_easy</span> <span class="o">*</span> <span class="n">multiplier</span>
+        <span class="k">if</span> <span class="n">difficulty</span> <span class="o">==</span> <span class="s2">&quot;hard&quot;</span><span class="p">:</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">base_hard</span> <span class="o">*</span> <span class="n">multiplier</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">points</span><span class="p">)</span> <span class="c1"># Round to whole number</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Points for this question: </span><span class="si">{</span><span class="n">points</span><span class="si">}</span><span class="s2">, with difficulty: </span><span class="si">{</span><span class="n">difficulty</span><span class="si">}</span><span class="s2"> and time: </span><span class="si">{</span><span class="n">elapsed_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_points</span><span class="p">(</span><span class="n">points</span><span class="p">)</span></div>
+
+    
+<div class="viewcode-block" id="GameManager.update_points">
+<a class="viewcode-back" href="../../app.html#app.logic.GameManager.update_points">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_points</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">points</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Add points to the player&#39;s current score and update the display.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            points (int): Number of points to add to the current score.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">current_points</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_points</span> <span class="o">+</span> <span class="n">points</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">pointsWidget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Points: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_points</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GameManager.finish_game">
+<a class="viewcode-back" href="../../app.html#app.logic.GameManager.finish_game">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">finish_game</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;End the current game session and optionally save the score.</span>
+<span class="sd">        </span>
+<span class="sd">        Disables game UI elements, re-enables menu options, stops the timer,</span>
+<span class="sd">        and prompts the player to save their score to the database.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">questionWidget</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">answerInput</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">submitButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">skipButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">levelMenu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">subjectMenu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">startGameMenu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">seeScoresMenu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">endGameMenu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">_stopTimer</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gui</span><span class="o">.</span><span class="n">show_save_score_dialog</span><span class="p">()</span></div>
+
+
+            
+        
+<div class="viewcode-block" id="GameManager.save_score">
+<a class="viewcode-back" href="../../app.html#app.logic.GameManager.save_score">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_score</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">player_name</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Convert list of subjects to a string and save the player&#39;s score to the database.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            player_name (str): The name of the player.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_subjects_str</span> <span class="o">=</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_subjects</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">save_score</span><span class="p">(</span><span class="n">player_name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_points</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">current_difficulty</span><span class="p">,</span> <span class="n">selected_subjects_str</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Saving score for </span><span class="si">{</span><span class="n">player_name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_points</span><span class="si">}</span><span class="s2"> points, at </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">current_difficulty</span><span class="si">}</span><span class="s2"> difficulty, in </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">selected_subjects</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span></div>
+</div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Vilmer Dahlqvist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

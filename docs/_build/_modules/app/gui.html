@@ -1,0 +1,517 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>app.gui &mdash; Math game with LaTeX input  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Math game with LaTeX input
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"></div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Math game with LaTeX input</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">app.gui</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for app.gui</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span><span class="w"> </span><span class="nn">PyQt5.QtWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QMainWindow</span><span class="p">,</span> <span class="n">QMenuBar</span><span class="p">,</span> <span class="n">QMenu</span><span class="p">,</span> <span class="n">QWidget</span><span class="p">,</span> <span class="n">QVBoxLayout</span><span class="p">,</span> <span class="n">QHBoxLayout</span><span class="p">,</span> <span class="n">QLabel</span><span class="p">,</span> <span class="n">QPushButton</span><span class="p">,</span> <span class="n">QLineEdit</span><span class="p">,</span> <span class="n">QInputDialog</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">,</span> <span class="n">QTableWidget</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PyQt5.QtCore</span><span class="w"> </span><span class="kn">import</span> <span class="n">Qt</span><span class="p">,</span> <span class="n">QTimer</span><span class="p">,</span> <span class="n">QUrl</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">PyQt5.QtWebEngineWidgets</span><span class="w"> </span><span class="kn">import</span> <span class="n">QWebEngineView</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">logic</span><span class="w"> </span><span class="kn">import</span> <span class="n">GameManager</span>
+
+<div class="viewcode-block" id="MainWindow">
+<a class="viewcode-back" href="../../app.html#app.gui.MainWindow">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">MainWindow</span><span class="p">(</span><span class="n">QMainWindow</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Main window for the math game application.</span>
+<span class="sd">    </span>
+<span class="sd">    This class creates and manages the main user interface including the menu bar,</span>
+<span class="sd">    question display area, answer input field, and control buttons.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        questionWidget (QLabel): Label widget displaying the current math question.</span>
+<span class="sd">        answerInput (QLineEdit): Input field for the user&#39;s answer.</span>
+<span class="sd">        submitButton (QPushButton): Button to submit the answer.</span>
+<span class="sd">        skipButton (QPushButton): Button to skip the current question.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="MainWindow.__init__">
+<a class="viewcode-back" href="../../app.html#app.gui.MainWindow.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the main window and create the user interface.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+
+        <span class="c1"># Initialize timer variables BEFORE creating UI</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_elapsed</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span> <span class="o">=</span> <span class="n">QTimer</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">timeout</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_updateTimer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scoreboard_window</span> <span class="o">=</span> <span class="kc">None</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">game_manager</span> <span class="o">=</span> <span class="n">GameManager</span><span class="p">(</span><span class="n">gui</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span>  <span class="c1"># Pass self reference</span>
+        <span class="c1"># Create the main layout first</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_createUI</span><span class="p">()</span></div>
+
+        
+    <span class="k">def</span><span class="w"> </span><span class="nf">_createUI</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create and organize the main user interface layout.</span>
+<span class="sd">        </span>
+<span class="sd">        Sets up the central widget with a vertical layout containing the question area,</span>
+<span class="sd">        answer input field, and button controls.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Create central widget and main layout</span>
+        <span class="n">central_widget</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">()</span>
+        <span class="n">main_layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">questionBrowser</span> <span class="o">=</span> <span class="n">QWebEngineView</span><span class="p">()</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">questionBrowser</span><span class="p">)</span>
+        
+        <span class="c1"># Add different sections</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_createMenuBar</span><span class="p">()</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_createQuestionArea</span><span class="p">(</span><span class="s2">&quot;Fråga&quot;</span><span class="p">))</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_createAnswerArea</span><span class="p">())</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_createButtonArea</span><span class="p">())</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_createTimerArea</span><span class="p">())</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_createPointArea</span><span class="p">())</span>
+        <span class="n">main_layout</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span>
+        
+        <span class="n">central_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">main_layout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setCentralWidget</span><span class="p">(</span><span class="n">central_widget</span><span class="p">)</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_createMenuBar</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the application menu bar.</span>
+<span class="sd">        </span>
+<span class="sd">        Adds menu items for Preferences, Levels, Subjects, Start Game, and See Scores.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">menuBar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">menuBar</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">levelMenu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s2">&quot;&amp;Levels&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">subjectMenu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s2">&quot;&amp;Subjects&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">startGameMenu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s2">&quot;&amp;Start Game&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seeScoresMenu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s2">&quot;&amp;See Scores&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endGameMenu</span> <span class="o">=</span> <span class="n">QMenu</span><span class="p">(</span><span class="s2">&quot;&amp;End Game&quot;</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span>
+        <span class="n">menuBar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">levelMenu</span><span class="p">)</span>
+        <span class="n">menuBar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">subjectMenu</span><span class="p">)</span>
+        <span class="n">menuBar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">startGameMenu</span><span class="p">)</span>
+        <span class="n">menuBar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">seeScoresMenu</span><span class="p">)</span>
+        <span class="n">menuBar</span><span class="o">.</span><span class="n">addMenu</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endGameMenu</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endGameMenu</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># Disabled initially</span>
+
+        <span class="n">newGameAction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">startGameMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;New Game&quot;</span><span class="p">)</span>
+        <span class="n">newGameAction</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_manager</span><span class="o">.</span><span class="n">start_game</span><span class="p">)</span>
+        <span class="c1"># Adding subjects to menu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectAlgebra</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subjectMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Algebra&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectEquations</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subjectMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Equations&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectCalculus</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">subjectMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Calculus&quot;</span><span class="p">)</span>
+        <span class="c1"># Setting subjects to checkable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectAlgebra</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectEquations</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectCalculus</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Adding levels to menu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectEasy</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">levelMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Easy&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectHard</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">levelMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Hard&quot;</span><span class="p">)</span>
+        <span class="c1"># Setting levels to checkable</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectEasy</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectHard</span><span class="o">.</span><span class="n">setCheckable</span><span class="p">(</span><span class="kc">True</span><span class="p">)</span>
+        <span class="c1"># Connect to update game manager when changed</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectAlgebra</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_selected_subjects</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectEquations</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_selected_subjects</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectCalculus</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_selected_subjects</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">endGame</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">endGameMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Quit game&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endGame</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">game_manager</span><span class="o">.</span><span class="n">finish_game</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectEasy</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_selected_difficulty</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">selectHard</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">update_selected_difficulty</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">seeScores</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">seeScoresMenu</span><span class="o">.</span><span class="n">addAction</span><span class="p">(</span><span class="s2">&quot;Show Scores&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">seeScores</span><span class="o">.</span><span class="n">triggered</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">open_scoreboard</span><span class="p">)</span>
+
+
+
+
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_createQuestionArea</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">question</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the question display area with LaTeX rendering.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            question (str): The LaTeX math question to display.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            QWebEngineView: The web view widget containing the rendered question.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">questionWidget</span> <span class="o">=</span> <span class="n">QWebEngineView</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">questionWidget</span><span class="o">.</span><span class="n">setMinimumHeight</span><span class="p">(</span><span class="mi">150</span><span class="p">)</span>  <span class="c1"># Set minimum height</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">questionWidget</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># Disabled until game starts</span>
+        
+        <span class="c1"># Load initial empty question</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">update_question_display</span><span class="p">(</span><span class="n">question</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">questionWidget</span>
+    
+<div class="viewcode-block" id="MainWindow.update_question_display">
+<a class="viewcode-back" href="../../app.html#app.gui.MainWindow.update_question_display">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_question_display</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">latex_question</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the question display with LaTeX rendering.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            latex_question (str): LaTeX formatted question string.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">html</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">        &lt;html&gt;</span>
+<span class="s2">        &lt;head&gt;</span>
+<span class="s2">            &lt;script&gt;</span>
+<span class="s2">                window.MathJax = </span><span class="se">{{</span>
+<span class="s2">                    tex: </span><span class="se">{{</span><span class="s2">inlineMath: [[&#39;$&#39;,&#39;$&#39;], [&#39;</span><span class="se">\\\\</span><span class="s2">(&#39;,&#39;</span><span class="se">\\\\</span><span class="s2">)&#39;]]</span><span class="se">}}</span>
+<span class="s2">                </span><span class="se">}}</span><span class="s2">;</span>
+<span class="s2">            &lt;/script&gt;</span>
+<span class="s2">            &lt;script src=&quot;https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js&quot;&gt;&lt;/script&gt;</span>
+<span class="s2">        &lt;/head&gt;</span>
+<span class="s2">        &lt;body style=&quot;font-size: 30px; padding: 20px; text-align: center; font-family: Arial;&quot;&gt;</span>
+<span class="s2">            &lt;p&gt;&lt;b&gt;Question:&lt;/b&gt;&lt;/p&gt;</span>
+<span class="s2">            &lt;p&gt;</span><span class="se">\\</span><span class="s2">(</span><span class="si">{</span><span class="n">latex_question</span><span class="si">}</span><span class="se">\\</span><span class="s2">)&lt;/p&gt;</span>
+<span class="s2">        &lt;/body&gt;</span>
+<span class="s2">        &lt;/html&gt;</span>
+<span class="s2">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">questionWidget</span><span class="o">.</span><span class="n">setHtml</span><span class="p">(</span><span class="n">html</span><span class="p">)</span></div>
+
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_createAnswerArea</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the answer input field.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            QLineEdit: The input field where users enter their answers.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">answerInput</span> <span class="o">=</span> <span class="n">QLineEdit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">answerInput</span><span class="o">.</span><span class="n">setPlaceholderText</span><span class="p">(</span><span class="s2">&quot;Enter your answer...&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">answerInput</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
+        <span class="n">font</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">answerInput</span><span class="o">.</span><span class="n">font</span><span class="p">()</span>
+        <span class="n">font</span><span class="o">.</span><span class="n">setPointSize</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">answerInput</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">answerInput</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># Disabled until game starts</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">answerInput</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_createButtonArea</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the button control area.</span>
+<span class="sd">        </span>
+<span class="sd">        Creates a horizontal layout with Submit and Skip buttons centered on the screen.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            QWidget: Widget containing the button layout.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">button_widget</span> <span class="o">=</span> <span class="n">QWidget</span><span class="p">()</span>
+        <span class="n">button_layout</span> <span class="o">=</span> <span class="n">QHBoxLayout</span><span class="p">()</span>
+        
+        <span class="bp">self</span><span class="o">.</span><span class="n">submitButton</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Submit&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">submitButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_submit</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skipButton</span> <span class="o">=</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s2">&quot;Skip&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skipButton</span><span class="o">.</span><span class="n">clicked</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">on_skip</span><span class="p">)</span>
+        
+        <span class="n">button_layout</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span>
+        <span class="n">button_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">submitButton</span><span class="p">)</span>
+        <span class="n">button_layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">skipButton</span><span class="p">)</span>
+        <span class="n">button_layout</span><span class="o">.</span><span class="n">addStretch</span><span class="p">()</span>
+        
+        <span class="n">button_widget</span><span class="o">.</span><span class="n">setLayout</span><span class="p">(</span><span class="n">button_layout</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">submitButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># Disabled until game starts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">skipButton</span><span class="o">.</span><span class="n">setEnabled</span><span class="p">(</span><span class="kc">False</span><span class="p">)</span>    <span class="c1"># Disabled until game starts</span>
+        <span class="k">return</span> <span class="n">button_widget</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_createTimerArea</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the timer area.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            QLabel: Label widget displaying the elapsed time.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timerWidget</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_elapsed</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timerWidget</span><span class="o">.</span><span class="n">setAlignment</span><span class="p">(</span><span class="n">Qt</span><span class="o">.</span><span class="n">AlignCenter</span><span class="p">)</span>
+        <span class="n">font</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">timerWidget</span><span class="o">.</span><span class="n">font</span><span class="p">()</span>
+        <span class="n">font</span><span class="o">.</span><span class="n">setPointSize</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timerWidget</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">timerWidget</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_createPointArea</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Create the points display area.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            QLabel: Label widget displaying the current points.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pointsWidget</span> <span class="o">=</span> <span class="n">QLabel</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Points: 0&quot;</span><span class="p">)</span>
+        <span class="n">font</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pointsWidget</span><span class="o">.</span><span class="n">font</span><span class="p">()</span>
+        <span class="n">font</span><span class="o">.</span><span class="n">setPointSize</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pointsWidget</span><span class="o">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">pointsWidget</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_updateTimer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the timer display by counting up.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_elapsed</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timerWidget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_elapsed</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span><span class="w"> </span><span class="nf">_startTimer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Start the question timer.&quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="n">time</span><span class="o">.</span><span class="n">time</span><span class="p">()</span>  <span class="c1"># Store when timer started</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">time_elapsed</span> <span class="o">=</span> <span class="mi">0</span>  <span class="c1"># Reset to 0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timerWidget</span><span class="o">.</span><span class="n">setText</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Time: </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">time_elapsed</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>  <span class="c1"># Timer ticks every second (1000ms)</span>
+        
+    <span class="k">def</span><span class="w"> </span><span class="nf">_stopTimer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Stop the timer and return elapsed time.&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">stop</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">time_elapsed</span>  <span class="c1"># Return elapsed seconds</span>
+    
+    <span class="k">def</span><span class="w"> </span><span class="nf">_restart_timer</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">elapsed_time</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Restart the timer from a specific elapsed time.</span>
+<span class="sd">        </span>
+<span class="sd">        Used when the player gives an incorrect answer and needs to try again</span>
+<span class="sd">        without resetting the timer to zero.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            elapsed_time (int): The elapsed time in seconds to continue from.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_time</span> <span class="o">=</span> <span class="n">elapsed_time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timer</span><span class="o">.</span><span class="n">start</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>
+    
+<div class="viewcode-block" id="MainWindow.on_submit">
+<a class="viewcode-back" href="../../app.html#app.gui.MainWindow.on_submit">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_submit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle the submit button click.</span>
+<span class="sd">        </span>
+<span class="sd">        Retrieves the user&#39;s answer from the input field, stops the timer,</span>
+<span class="sd">        and passes the answer to the game manager for validation.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">user_answer</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">answerInput</span><span class="o">.</span><span class="n">text</span><span class="p">()</span>
+        <span class="n">elapsed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_stopTimer</span><span class="p">()</span>  <span class="c1"># Get elapsed time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">game_manager</span><span class="o">.</span><span class="n">check_answer</span><span class="p">(</span><span class="n">user_answer</span><span class="p">,</span> <span class="n">elapsed</span><span class="p">)</span>  <span class="c1"># Pass it to game manager</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.on_skip">
+<a class="viewcode-back" href="../../app.html#app.gui.MainWindow.on_skip">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">on_skip</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Handle the skip button click.</span>
+<span class="sd">        </span>
+<span class="sd">        Loads the next question without checking the current answer.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">game_manager</span><span class="o">.</span><span class="n">next_question</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.update_selected_subjects">
+<a class="viewcode-back" href="../../app.html#app.gui.MainWindow.update_selected_subjects">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_selected_subjects</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the game manager with selected subjects.</span>
+<span class="sd">        </span>
+<span class="sd">        Reads the checkbox states from the subject menu and passes the list of</span>
+<span class="sd">        selected subjects to the game manager.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">selected_subjects</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectAlgebra</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="n">selected_subjects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;algebra&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectEquations</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="n">selected_subjects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;equations&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectCalculus</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="n">selected_subjects</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;calculus&quot;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">game_manager</span><span class="o">.</span><span class="n">set_subjects</span><span class="p">(</span><span class="n">selected_subjects</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MainWindow.update_selected_difficulty">
+<a class="viewcode-back" href="../../app.html#app.gui.MainWindow.update_selected_difficulty">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">update_selected_difficulty</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Update the game manager with selected difficulty level.</span>
+<span class="sd">        </span>
+<span class="sd">        Reads the checkbox states from the level menu and passes the selected</span>
+<span class="sd">        difficulty to the game manager.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">current_difficulty</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectEasy</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="n">current_difficulty</span> <span class="o">=</span> <span class="s2">&quot;easy&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">selectHard</span><span class="o">.</span><span class="n">isChecked</span><span class="p">():</span>
+            <span class="n">current_difficulty</span> <span class="o">=</span> <span class="s2">&quot;hard&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">game_manager</span><span class="o">.</span><span class="n">set_difficulty</span><span class="p">(</span><span class="n">current_difficulty</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="MainWindow.show_save_score_dialog">
+<a class="viewcode-back" href="../../app.html#app.gui.MainWindow.show_save_score_dialog">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">show_save_score_dialog</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Show dialog to save player&#39;s score.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            str or None: Player&#39;s name if they chose to save, None if cancelled.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">ok</span> <span class="o">=</span> <span class="n">QInputDialog</span><span class="o">.</span><span class="n">getText</span><span class="p">(</span>
+            <span class="bp">self</span><span class="p">,</span>
+            <span class="s2">&quot;Spara Resultat&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;Namn:&quot;</span><span class="p">,</span>
+            <span class="n">QLineEdit</span><span class="o">.</span><span class="n">Normal</span><span class="p">,</span>
+            <span class="s2">&quot;&quot;</span>
+        <span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">ok</span> <span class="ow">and</span> <span class="n">name</span><span class="p">:</span>
+            <span class="c1"># User clicked &quot;Spara&quot; and entered a name</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">game_manager</span><span class="o">.</span><span class="n">save_score</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># User clicked &quot;Spara inte&quot; or cancelled</span>
+            <span class="k">return</span> <span class="kc">None</span></div>
+
+        
+
+<div class="viewcode-block" id="MainWindow.open_scoreboard">
+<a class="viewcode-back" href="../../app.html#app.gui.MainWindow.open_scoreboard">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">open_scoreboard</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Open the scoreboard window.</span>
+<span class="sd">        </span>
+<span class="sd">        Creates a new Scoreboard window if one doesn&#39;t exist, then shows and</span>
+<span class="sd">        raises it to the front.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">scoreboard_window</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scoreboard_window</span> <span class="o">=</span> <span class="n">Scoreboard</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scoreboard_window</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scoreboard_window</span><span class="o">.</span><span class="n">raise_</span><span class="p">()</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="Scoreboard">
+<a class="viewcode-back" href="../../app.html#app.gui.Scoreboard">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">Scoreboard</span><span class="p">(</span><span class="n">QWidget</span><span class="p">):</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Window displaying the high scores table.</span>
+<span class="sd">    </span>
+<span class="sd">    This widget shows all saved scores from the database in a sortable table</span>
+<span class="sd">    format, including player names, scores, difficulty, subject, and date.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        table (QTableWidget): The table widget displaying score data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+<div class="viewcode-block" id="Scoreboard.__init__">
+<a class="viewcode-back" href="../../app.html#app.gui.Scoreboard.__init__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Initialize the scoreboard window and load scores from the database.&quot;&quot;&quot;</span>
+        <span class="nb">super</span><span class="p">()</span><span class="o">.</span><span class="fm">__init__</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">setWindowTitle</span><span class="p">(</span><span class="s2">&quot;Scoreboard&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resize</span><span class="p">(</span><span class="mi">700</span><span class="p">,</span> <span class="mi">400</span><span class="p">)</span>
+
+        <span class="n">layout</span> <span class="o">=</span> <span class="n">QVBoxLayout</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span> <span class="o">=</span> <span class="n">QTableWidget</span><span class="p">()</span>
+        <span class="n">layout</span><span class="o">.</span><span class="n">addWidget</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="p">)</span>
+        
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_scores</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Scoreboard.load_scores">
+<a class="viewcode-back" href="../../app.html#app.gui.Scoreboard.load_scores">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="nf">load_scores</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Load and display scores from the database.</span>
+<span class="sd">        </span>
+<span class="sd">        Queries the database for all scores, sorted by score in descending order,</span>
+<span class="sd">        and populates the table widget with the results. Each row contains the</span>
+<span class="sd">        player&#39;s name, score, difficulty, subject, and date.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">sqlite3</span>
+        <span class="n">conn</span> <span class="o">=</span> <span class="n">sqlite3</span><span class="o">.</span><span class="n">connect</span><span class="p">(</span><span class="s2">&quot;scores.db&quot;</span><span class="p">)</span>
+        <span class="n">cursor</span> <span class="o">=</span> <span class="n">conn</span><span class="o">.</span><span class="n">cursor</span><span class="p">()</span>
+        <span class="n">cursor</span><span class="o">.</span><span class="n">execute</span><span class="p">(</span><span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">            SELECT name, score, difficulty, subject, date</span>
+<span class="s2">            FROM scores ORDER BY score DESC</span>
+<span class="s2">        &quot;&quot;&quot;</span><span class="p">)</span>
+        <span class="n">rows</span> <span class="o">=</span> <span class="n">cursor</span><span class="o">.</span><span class="n">fetchall</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setRowCount</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">rows</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setColumnCount</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setHorizontalHeaderLabels</span><span class="p">(</span>
+            <span class="p">[</span><span class="s2">&quot;Name&quot;</span><span class="p">,</span> <span class="s2">&quot;Score&quot;</span><span class="p">,</span> <span class="s2">&quot;Difficulty&quot;</span><span class="p">,</span> <span class="s2">&quot;Subject&quot;</span><span class="p">,</span> <span class="s2">&quot;Date&quot;</span><span class="p">]</span>
+        <span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">r</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">rows</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">val</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">row</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">setItem</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">c</span><span class="p">,</span> <span class="n">QTableWidgetItem</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">val</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">table</span><span class="o">.</span><span class="n">resizeColumnsToContents</span><span class="p">()</span></div>
+</div>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Vilmer Dahlqvist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
