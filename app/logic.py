@@ -94,7 +94,6 @@ class GameManager:
         # Pick a random subject from selected ones
         subject = random.choice(self.selected_subjects)
         
-        # Pick a random difficulty (you can make this selectable too)
         difficulty = self.current_difficulty
         
         # Pick a random question
@@ -105,7 +104,6 @@ class GameManager:
         self.correct_answer = question_data["answer"]
         
         if self.gui:
-            # Use the new update method instead of setText
             self.gui.update_question_display(self.current_question)
             self.gui.answerInput.clear()
             self.gui._startTimer()

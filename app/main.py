@@ -14,14 +14,13 @@ def main():
     Creates the QApplication instance, initializes the main window,
     and starts the Qt event loop.
     """
-    # Skapa applikationsobjektet (måste finnas i varje PyQt app)
+
     app = QApplication(sys.argv)
     apply_stylesheet(app)
-    # Skapa ditt huvudfönster
+
     window = MainWindow()
     window.show()
 
-    # Starta event-loopen
     sys.exit(app.exec_())
 
 def apply_stylesheet(app, filename="style.qss"):
@@ -31,9 +30,9 @@ def apply_stylesheet(app, filename="style.qss"):
         app (QApplication): The application instance
         filename (str): Name of the stylesheet file
     """
-    # Get the directory where main.py is located
+
     script_dir = os.path.dirname(os.path.abspath(__file__))
-    # Build full path to style.qss
+
     style_path = os.path.join(script_dir, filename)
     
     try:

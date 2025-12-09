@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
         """Initialize the main window and create the user interface."""
         super().__init__()
 
-        # Initialize timer variables BEFORE creating UI
+        # Initialize variables
         self.time_elapsed = 0
         self.start_time = 0
         self.timer = QTimer()
@@ -28,8 +28,7 @@ class MainWindow(QMainWindow):
         self.scoreboard_window = None
 
 
-        self.game_manager = GameManager(gui=self)  # Pass self reference
-        # Create the main layout first
+        self.game_manager = GameManager(gui=self)
         self._createUI()
         
     def _createUI(self):
@@ -95,13 +94,13 @@ class MainWindow(QMainWindow):
         self.selectAlgebra.triggered.connect(self.update_selected_subjects)
         self.selectEquations.triggered.connect(self.update_selected_subjects)
         self.selectCalculus.triggered.connect(self.update_selected_subjects)
-
+        # Adding button for ending game
         self.endGame = self.endGameMenu.addAction("Quit game")
         self.endGame.triggered.connect(self.game_manager.finish_game)
-
+        # Action for selecting difficulty
         self.selectEasy.triggered.connect(self.update_selected_difficulty)
         self.selectHard.triggered.connect(self.update_selected_difficulty)
-
+        # Action for opening score menu
         self.seeScores = self.seeScoresMenu.addAction("Show Scores")
         self.seeScores.triggered.connect(self.open_scoreboard)
 
