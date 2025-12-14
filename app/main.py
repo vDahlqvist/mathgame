@@ -19,13 +19,13 @@ def main():
     app = QApplication(sys.argv)
     apply_stylesheet(app)
 
+    logic = GameManager()
+    logic.init_db()
+
     window = MainWindow()
     window.show()
 
     sys.exit(app.exec_())
-
-    logic = GameManager()
-    logic.init_db()
 
 def apply_stylesheet(app, filename="style.qss"):
     """Apply QSS stylesheet to the application.
