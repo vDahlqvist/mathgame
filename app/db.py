@@ -21,20 +21,19 @@ class DatabaseManager:
             bool: True if initialization successful, False if database error occurred.
         """
         try:
-            conn = sqlite3.connect('scores.db')
-            c = conn.cursor()
-            c.execute('''
-                CREATE TABLE IF NOT EXISTS scores (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT,
-                score INTEGER,
-                difficulty TEXT,
-                subject TEXT,
-                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
-            conn.commit()
-            conn.close()
+            with sqlite3.connect('scores.db') as conn:
+                c = conn.cursor()
+                c.execute('''
+                    CREATE TABLE IF NOT EXISTS scores (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT,
+                    score INTEGER,
+                    difficulty TEXT,
+                    subject TEXT,
+                    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )
+                ''')
+                conn.commit()
             return True
         
         except sqlite3.Error:
@@ -56,24 +55,23 @@ class DatabaseManager:
             bool: True if save successful, False if database error occurred.
         """
         try:
-            conn = sqlite3.connect('scores.db')
-            c = conn.cursor()
-            c.execute('''
-                CREATE TABLE IF NOT EXISTS scores (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT,
-                score INTEGER,
-                difficulty TEXT,
-                subject TEXT,
-                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
-            c.execute('''
-                INSERT INTO scores (name, score, difficulty, subject)
-                VALUES (?, ?, ?, ?)
-            ''', (name, score, difficulty, subject))
-            conn.commit()
-            conn.close()
+            with sqlite3.connect('scores.db') as conn:
+                c = conn.cursor()
+                c.execute('''
+                    CREATE TABLE IF NOT EXISTS scores (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    name TEXT,
+                    score INTEGER,
+                    difficulty TEXT,
+                    subject TEXT,
+                    date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                    )
+                ''')
+                c.execute('''
+                    INSERT INTO scores (name, score, difficulty, subject)
+                    VALUES (?, ?, ?, ?)
+                ''', (name, score, difficulty, subject))
+                conn.commit()
             return True
 
         except sqlite3.Error as e:
@@ -89,14 +87,13 @@ class DatabaseManager:
                   Returns empty list if database error occurs.
         """
         try:
-            conn = sqlite3.connect('scores.db')
-            c = conn.cursor()
-            c.execute('''
-                SELECT name, score, difficulty, subject, date
-                FROM scores ORDER BY score DESC
-            ''')
-            scores = c.fetchall()
-            conn.close()
+            with sqlite3.connect('scores.db') as conn:
+                c = conn.cursor()
+                c.execute('''
+                    SELECT name, score, difficulty, subject, date
+                    FROM scores ORDER BY score DESC
+                ''')
+                scores = c.fetchall()
             return scores
         except sqlite3.Error as e:
             print(f"Database error: {e}")
