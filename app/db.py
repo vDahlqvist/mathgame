@@ -44,8 +44,8 @@ class DatabaseManager:
     def save_score(self, name, score, difficulty, subject):
         """Save a player's score to the database.
         
-        Creates the scores table if it doesn't exist, then inserts a new score record
-        with the player's name, score, difficulty level, subject, and timestamp.
+        Inserts a new score record with the player's name, score, difficulty level,
+        subject, and timestamp.
         
         Args:
             name (str): The player's name.
@@ -59,16 +59,6 @@ class DatabaseManager:
         try:
             conn = sqlite3.connect('scores.db')
             c = conn.cursor()
-            c.execute('''
-                CREATE TABLE IF NOT EXISTS scores (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT,
-                score INTEGER,
-                difficulty TEXT,
-                subject TEXT,
-                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
             c.execute('''
                 INSERT INTO scores (name, score, difficulty, subject)
                 VALUES (?, ?, ?, ?)
