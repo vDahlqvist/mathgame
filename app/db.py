@@ -36,7 +36,8 @@ class DatabaseManager:
                 conn.commit()
             return True
         
-        except sqlite3.Error:
+        except sqlite3.Error as e:
+            print(f"Database error: {e}")
             return False
 
     def save_score(self, name, score, difficulty, subject):
