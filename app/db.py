@@ -11,6 +11,35 @@ class DatabaseManager:
         """Initialize the database manager."""
         pass
 
+    def init_db(self):
+        """Initialize the database by creating the scores table if it doesn't exist.
+        
+        This should be called at application startup to ensure the database
+        is properly set up before any operations.
+        
+        Returns:
+            bool: True if initialization successful, False if database error occurred.
+        """
+        try:
+            conn = sqlite3.connect('scores.db')
+            c = conn.cursor()
+            c.execute('''
+                CREATE TABLE IF NOT EXISTS scores (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                name TEXT,
+                score INTEGER,
+                difficulty TEXT,
+                subject TEXT,
+                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+                )
+            ''')
+            conn.commit()
+            conn.close()
+            return True
+        
+        except sqlite3.Error:
+            return False
+
     def save_score(self, name, score, difficulty, subject):
         """Save a player's score to the database.
         
@@ -22,39 +51,53 @@ class DatabaseManager:
             score (int): The player's final score.
             difficulty (str): The difficulty level ("easy" or "hard").
             subject (str): The subject(s) played (e.g., "algebra", "equations").
+            
+        Returns:
+            bool: True if save successful, False if database error occurred.
         """
-        conn = sqlite3.connect('scores.db')
-        c = conn.cursor()
-        c.execute('''
-            CREATE TABLE IF NOT EXISTS scores (
+        try:
+            conn = sqlite3.connect('scores.db')
+            c = conn.cursor()
+            c.execute('''
+                CREATE TABLE IF NOT EXISTS scores (
                 id INTEGER PRIMARY KEY AUTOINCREMENT,
                 name TEXT,
                 score INTEGER,
                 difficulty TEXT,
                 subject TEXT,
                 date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )
-        ''')
-        c.execute('''
-            INSERT INTO scores (name, score, difficulty, subject)
-            VALUES (?, ?, ?, ?)
-        ''', (name, score, difficulty, subject))
-        conn.commit()
-        conn.close()
+                )
+            ''')
+            c.execute('''
+                INSERT INTO scores (name, score, difficulty, subject)
+                VALUES (?, ?, ?, ?)
+            ''', (name, score, difficulty, subject))
+            conn.commit()
+            conn.close()
+            return True
+
+        except sqlite3.Error:
+            return False
         
     def get_scores(self):
-        """Retrieve all scores from the database.
+        """Retrieve all scores from the database sorted by score descending.
         
         Returns:
             list: List of tuples containing score data. Each tuple contains:
-                  (id, name, score, difficulty, subject, date).
+                  (name, score, difficulty, subject, date).
+                  Returns empty list if database error occurs.
         """
-        conn = sqlite3.connect('scores.db')
-        c = conn.cursor()
-        c.execute('''
-            SELECT * FROM scores
-        ''')
-        scores = c.fetchall()
-        conn.close()
-        return scores
+        try:
+            conn = sqlite3.connect('scores.db')
+            c = conn.cursor()
+            c.execute('''
+                SELECT name, score, difficulty, subject, date
+                FROM scores ORDER BY score DESC
+            ''')
+            scores = c.fetchall()
+            conn.close()
+            return scores
+        except sqlite3.Error as e:
+            print(f"Database error: {e}")
+            return []
 

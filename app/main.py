@@ -7,6 +7,7 @@ import sys
 import os
 from PyQt5.QtWidgets import QApplication
 from gui import MainWindow
+from logic import GameManager
 
 def main():
     """Initialize and run the math game application.
@@ -23,12 +24,18 @@ def main():
 
     sys.exit(app.exec_())
 
+    logic = GameManager()
+    logic.init_db()
+
 def apply_stylesheet(app, filename="style.qss"):
     """Apply QSS stylesheet to the application.
     
+    Loads and applies a QSS stylesheet from the same directory as main.py.
+    Prints a warning if the file is not found but continues execution.
+    
     Args:
-        app (QApplication): The application instance
-        filename (str): Name of the stylesheet file
+        app (QApplication): The application instance to apply the stylesheet to.
+        filename (str): Name of the stylesheet file. Defaults to "style.qss".
     """
 
     script_dir = os.path.dirname(os.path.abspath(__file__))
