@@ -20,6 +20,7 @@ class DatabaseManager:
         Returns:
             bool: True if initialization successful, False if database error occurred.
         """
+        conn = None
         try:
             conn = sqlite3.connect('scores.db')
             c = conn.cursor()
@@ -34,15 +35,13 @@ class DatabaseManager:
                 )
             ''')
             conn.commit()
-            conn.close()
             return True
         
-        except sqlite3.Error as e:
-            print(f"Database initialization error: {e}")
+        except sqlite3.Error:
             return False
         finally:
-            conn.commit()
-            conn.close()
+            if conn:
+                conn.close()
 
     def save_score(self, name, score, difficulty, subject):
         """Save a player's score to the database.
@@ -59,42 +58,33 @@ class DatabaseManager:
         Returns:
             bool: True if save successful, False if database error occurred.
         """
+        conn = None
         try:
             conn = sqlite3.connect('scores.db')
             c = conn.cursor()
-            c.execute('''
-                CREATE TABLE IF NOT EXISTS scores (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                name TEXT,
-                score INTEGER,
-                difficulty TEXT,
-                subject TEXT,
-                date TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-                )
-            ''')
+
             c.execute('''
                 INSERT INTO scores (name, score, difficulty, subject)
                 VALUES (?, ?, ?, ?)
             ''', (name, score, difficulty, subject))
             conn.commit()
-            conn.close()
             return True
 
-        except sqlite3.Error as e:
-            print(f"Database error: {e}")
+        except sqlite3.Error:
             return False
         finally:
-            conn.commit()
-            conn.close()
+            if conn:
+                conn.close()
         
     def get_scores(self):
         """Retrieve all scores from the database sorted by score descending.
         
         Returns:
             list: List of tuples containing score data. Each tuple contains:
-                  (name, score, difficulty, subject, date).
-                  Returns empty list if database error occurs.
+                (name, score, difficulty, subject, date).
+                Returns empty list if database error occurs.
         """
+        conn = None
         try:
             conn = sqlite3.connect('scores.db')
             c = conn.cursor()
@@ -103,11 +93,11 @@ class DatabaseManager:
                 FROM scores ORDER BY score DESC
             ''')
             scores = c.fetchall()
-            conn.close()
             return scores
         except sqlite3.Error as e:
             print(f"Database error: {e}")
             return []
         finally:
-            conn.close()
+            if conn:
+                conn.close()
 
