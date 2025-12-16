@@ -15,7 +15,8 @@ class DatabaseManager:
         """Initialize the database by creating the scores table if it doesn't exist.
         
         This should be called at application startup to ensure the database
-        is properly set up before any operations.
+        is properly set up before any operations. Uses try-except-finally pattern
+        to ensure database connection is properly closed even if errors occur.
         
         Returns:
             bool: True if initialization successful, False if database error occurred.
@@ -46,8 +47,9 @@ class DatabaseManager:
     def save_score(self, name, score, difficulty, subject):
         """Save a player's score to the database.
         
-        Creates the scores table if it doesn't exist, then inserts a new score record
-        with the player's name, score, difficulty level, subject, and timestamp.
+        Inserts a new score record with the player's name, score, difficulty level,
+        subject, and timestamp. Uses try-except-finally pattern to ensure database
+        connection is properly closed even if errors occur.
         
         Args:
             name (str): The player's name.
@@ -78,6 +80,10 @@ class DatabaseManager:
         
     def get_scores(self):
         """Retrieve all scores from the database sorted by score descending.
+        
+        Queries all saved scores and returns them ordered by highest score first.
+        Uses try-except-finally pattern to ensure database connection is properly
+        closed even if errors occur. Prints error message to console on failure.
         
         Returns:
             list: List of tuples containing score data. Each tuple contains:

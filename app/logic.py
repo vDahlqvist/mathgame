@@ -119,18 +119,20 @@ class GameManager:
             self.gui._startTimer()
 
     def check_answer(self, answer, elapsed_time):
-        """Check the user's answer against the correct answer.
+        """Check the user's answer against the correct answer with validation and error handling.
         
-        Parses both the user's answer and the correct answer from LaTeX format
-        and compares them. If correct, calculates points and loads the next question.
-        If incorrect, restarts the timer for another attempt.
+        Validates that the input is not empty, parses both the user's answer and the
+        correct answer from LaTeX format, and compares them. Shows error dialogs for
+        empty input or invalid LaTeX syntax. If correct, calculates points and loads
+        the next question. If incorrect, restarts the timer for another attempt.
         
         Args:
             answer (str): The user's answer in LaTeX format.
             elapsed_time (int): Time taken to answer in seconds.
             
         Returns:
-            bool: True if the answer is correct, False otherwise.
+            bool: True if the answer is correct, False if answer is incorrect,
+                  empty, or contains invalid LaTeX syntax.
         """
         # Validate input is not empty or whitespace
         if not answer or answer.isspace():

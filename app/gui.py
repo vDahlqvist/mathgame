@@ -309,15 +309,18 @@ class MainWindow(QMainWindow):
 
 
     def show_save_score_dialog(self):
-        """Show dialog to save player's score.
+        """Show dialog to save player's score with input validation.
         
         Displays an input dialog for the player to enter their name and save
         their score to the database. Validates that the name is not empty or
         whitespace-only and is within acceptable length limits (1-50 characters).
-        If validation fails, shows an error message and prompts again.
+        If validation fails, shows an error message and prompts again in a loop
+        until a valid name is entered or the user cancels.
+        
+        The validated name is trimmed of leading/trailing whitespace before saving.
         
         Returns:
-            str or None: Player's name if they chose to save and name is valid,
+            str or None: Player's trimmed name if they chose to save and name is valid,
                         None if cancelled.
         """
         while True:

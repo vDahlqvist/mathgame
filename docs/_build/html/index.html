@@ -1,0 +1,622 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Math game with LaTeX input documentation &mdash; Math game with LaTeX input  documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Math game with LaTeX input
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <!-- Local TOC -->
+              <div class="local-toc"><ul>
+<li><a class="reference internal" href="#">Math game with LaTeX input documentation</a><ul>
+<li><a class="reference internal" href="#logic.GameManager"><code class="docutils literal notranslate"><span class="pre">GameManager</span></code></a><ul>
+<li><a class="reference internal" href="#logic.GameManager.gui"><code class="docutils literal notranslate"><span class="pre">GameManager.gui</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.db"><code class="docutils literal notranslate"><span class="pre">GameManager.db</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.questions"><code class="docutils literal notranslate"><span class="pre">GameManager.questions</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.current_question"><code class="docutils literal notranslate"><span class="pre">GameManager.current_question</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.correct_answer"><code class="docutils literal notranslate"><span class="pre">GameManager.correct_answer</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.selected_subjects"><code class="docutils literal notranslate"><span class="pre">GameManager.selected_subjects</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.current_difficulty"><code class="docutils literal notranslate"><span class="pre">GameManager.current_difficulty</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.current_points"><code class="docutils literal notranslate"><span class="pre">GameManager.current_points</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.questions_completed"><code class="docutils literal notranslate"><span class="pre">GameManager.questions_completed</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.__init__"><code class="docutils literal notranslate"><span class="pre">GameManager.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.set_difficulty"><code class="docutils literal notranslate"><span class="pre">GameManager.set_difficulty()</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.set_subjects"><code class="docutils literal notranslate"><span class="pre">GameManager.set_subjects()</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.start_game"><code class="docutils literal notranslate"><span class="pre">GameManager.start_game()</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.next_question"><code class="docutils literal notranslate"><span class="pre">GameManager.next_question()</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.check_answer"><code class="docutils literal notranslate"><span class="pre">GameManager.check_answer()</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.calculate_points"><code class="docutils literal notranslate"><span class="pre">GameManager.calculate_points()</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.update_points"><code class="docutils literal notranslate"><span class="pre">GameManager.update_points()</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.finish_game"><code class="docutils literal notranslate"><span class="pre">GameManager.finish_game()</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.save_score"><code class="docutils literal notranslate"><span class="pre">GameManager.save_score()</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.get_scores"><code class="docutils literal notranslate"><span class="pre">GameManager.get_scores()</span></code></a></li>
+<li><a class="reference internal" href="#logic.GameManager.init_db"><code class="docutils literal notranslate"><span class="pre">GameManager.init_db()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gui.MainWindow"><code class="docutils literal notranslate"><span class="pre">MainWindow</span></code></a><ul>
+<li><a class="reference internal" href="#gui.MainWindow.questionWidget"><code class="docutils literal notranslate"><span class="pre">MainWindow.questionWidget</span></code></a></li>
+<li><a class="reference internal" href="#gui.MainWindow.answerInput"><code class="docutils literal notranslate"><span class="pre">MainWindow.answerInput</span></code></a></li>
+<li><a class="reference internal" href="#gui.MainWindow.submitButton"><code class="docutils literal notranslate"><span class="pre">MainWindow.submitButton</span></code></a></li>
+<li><a class="reference internal" href="#gui.MainWindow.skipButton"><code class="docutils literal notranslate"><span class="pre">MainWindow.skipButton</span></code></a></li>
+<li><a class="reference internal" href="#gui.MainWindow.__init__"><code class="docutils literal notranslate"><span class="pre">MainWindow.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#gui.MainWindow.update_question_display"><code class="docutils literal notranslate"><span class="pre">MainWindow.update_question_display()</span></code></a></li>
+<li><a class="reference internal" href="#gui.MainWindow.on_submit"><code class="docutils literal notranslate"><span class="pre">MainWindow.on_submit()</span></code></a></li>
+<li><a class="reference internal" href="#gui.MainWindow.on_skip"><code class="docutils literal notranslate"><span class="pre">MainWindow.on_skip()</span></code></a></li>
+<li><a class="reference internal" href="#gui.MainWindow.update_selected_subjects"><code class="docutils literal notranslate"><span class="pre">MainWindow.update_selected_subjects()</span></code></a></li>
+<li><a class="reference internal" href="#gui.MainWindow.update_selected_difficulty"><code class="docutils literal notranslate"><span class="pre">MainWindow.update_selected_difficulty()</span></code></a></li>
+<li><a class="reference internal" href="#gui.MainWindow.show_save_score_dialog"><code class="docutils literal notranslate"><span class="pre">MainWindow.show_save_score_dialog()</span></code></a></li>
+<li><a class="reference internal" href="#gui.MainWindow.open_scoreboard"><code class="docutils literal notranslate"><span class="pre">MainWindow.open_scoreboard()</span></code></a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#gui.Scoreboard"><code class="docutils literal notranslate"><span class="pre">Scoreboard</span></code></a><ul>
+<li><a class="reference internal" href="#gui.Scoreboard.table"><code class="docutils literal notranslate"><span class="pre">Scoreboard.table</span></code></a></li>
+<li><a class="reference internal" href="#gui.Scoreboard.__init__"><code class="docutils literal notranslate"><span class="pre">Scoreboard.__init__()</span></code></a></li>
+<li><a class="reference internal" href="#gui.Scoreboard.load_scores"><code class="docutils literal notranslate"><span class="pre">Scoreboard.load_scores()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Math game with LaTeX input</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Math game with LaTeX input documentation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="math-game-with-latex-input-documentation">
+<h1>Math game with LaTeX input documentation<a class="headerlink" href="#math-game-with-latex-input-documentation" title="Link to this heading"></a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<dl class="py class" id="module-logic">
+<dt class="sig sig-object py" id="logic.GameManager">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">logic.</span></span><span class="sig-name descname"><span class="pre">GameManager</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gui</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager" title="Link to this definition"></a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>Manages the game logic and state for the math game.</p>
+<p>This class handles question selection, answer checking, score calculation,
+and game flow control. It coordinates between the GUI and database components.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="logic.GameManager.gui">
+<span class="sig-name descname"><span class="pre">gui</span></span><a class="headerlink" href="#logic.GameManager.gui" title="Link to this definition"></a></dt>
+<dd><p>Reference to the main window GUI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="app.html#app.gui.MainWindow" title="app.gui.MainWindow">MainWindow</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="logic.GameManager.db">
+<span class="sig-name descname"><span class="pre">db</span></span><a class="headerlink" href="#logic.GameManager.db" title="Link to this definition"></a></dt>
+<dd><p>Reference to the database manager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><a class="reference internal" href="app.html#app.db.DatabaseManager" title="app.db.DatabaseManager">DatabaseManager</a></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="logic.GameManager.questions">
+<span class="sig-name descname"><span class="pre">questions</span></span><a class="headerlink" href="#logic.GameManager.questions" title="Link to this definition"></a></dt>
+<dd><p>Dictionary of questions organized by subject and difficulty.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="logic.GameManager.current_question">
+<span class="sig-name descname"><span class="pre">current_question</span></span><a class="headerlink" href="#logic.GameManager.current_question" title="Link to this definition"></a></dt>
+<dd><p>The currently displayed question in LaTeX format.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="logic.GameManager.correct_answer">
+<span class="sig-name descname"><span class="pre">correct_answer</span></span><a class="headerlink" href="#logic.GameManager.correct_answer" title="Link to this definition"></a></dt>
+<dd><p>The correct answer to the current question.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="logic.GameManager.selected_subjects">
+<span class="sig-name descname"><span class="pre">selected_subjects</span></span><a class="headerlink" href="#logic.GameManager.selected_subjects" title="Link to this definition"></a></dt>
+<dd><p>List of subjects selected by the player.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="logic.GameManager.current_difficulty">
+<span class="sig-name descname"><span class="pre">current_difficulty</span></span><a class="headerlink" href="#logic.GameManager.current_difficulty" title="Link to this definition"></a></dt>
+<dd><p>Current difficulty level (“easy” or “hard”).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>str</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="logic.GameManager.current_points">
+<span class="sig-name descname"><span class="pre">current_points</span></span><a class="headerlink" href="#logic.GameManager.current_points" title="Link to this definition"></a></dt>
+<dd><p>Player’s current score for this game session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="logic.GameManager.questions_completed">
+<span class="sig-name descname"><span class="pre">questions_completed</span></span><a class="headerlink" href="#logic.GameManager.questions_completed" title="Link to this definition"></a></dt>
+<dd><p>Number of questions answered correctly in this session.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>int</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="logic.GameManager.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">gui</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">db</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the game manager.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>gui</strong> (<a class="reference internal" href="app.html#app.gui.MainWindow" title="app.gui.MainWindow"><em>MainWindow</em></a><em>, </em><em>optional</em>) – Reference to the main window GUI. Defaults to None.</p></li>
+<li><p><strong>db</strong> (<a class="reference internal" href="app.html#app.db.DatabaseManager" title="app.db.DatabaseManager"><em>DatabaseManager</em></a><em>, </em><em>optional</em>) – Reference to the database manager. Defaults to None.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="logic.GameManager.set_difficulty">
+<span class="sig-name descname"><span class="pre">set_difficulty</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">difficulty</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager.set_difficulty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager.set_difficulty" title="Link to this definition"></a></dt>
+<dd><p>Set the difficulty level for the game.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>difficulty</strong> (<em>str</em><em> or </em><em>None</em>) – Difficulty level (“easy” or “hard”).
+Can be None if no difficulty is selected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="logic.GameManager.set_subjects">
+<span class="sig-name descname"><span class="pre">set_subjects</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">subjects</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager.set_subjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager.set_subjects" title="Link to this definition"></a></dt>
+<dd><p>Set the selected subjects for the game.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>subjects</strong> (<em>list</em>) – List of subject names (e.g., [“algebra”, “equations”]).
+Can be an empty list if no subjects are selected.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="logic.GameManager.start_game">
+<span class="sig-name descname"><span class="pre">start_game</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager.start_game"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager.start_game" title="Link to this definition"></a></dt>
+<dd><p>Start a new game and initialize game state.</p>
+<p>Enables UI components for gameplay while disabling menu options that
+shouldn’t be changed during an active game. Loads the first question.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Currently does not reset points or questions_completed counters.
+This should be addressed in future updates.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="logic.GameManager.next_question">
+<span class="sig-name descname"><span class="pre">next_question</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager.next_question"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager.next_question" title="Link to this definition"></a></dt>
+<dd><p>Load and display the next question from selected subjects.</p>
+<p>Randomly selects a subject from the player’s chosen subjects, then picks
+a random question at the current difficulty level. Updates the GUI with
+the new question and starts the timer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Returns early if no subjects are selected.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="logic.GameManager.check_answer">
+<span class="sig-name descname"><span class="pre">check_answer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">answer</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">elapsed_time</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager.check_answer"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager.check_answer" title="Link to this definition"></a></dt>
+<dd><p>Check the user’s answer against the correct answer with validation and error handling.</p>
+<p>Validates that the input is not empty, parses both the user’s answer and the
+correct answer from LaTeX format, and compares them. Shows error dialogs for
+empty input or invalid LaTeX syntax. If correct, calculates points and loads
+the next question. If incorrect, restarts the timer for another attempt.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>answer</strong> (<em>str</em>) – The user’s answer in LaTeX format.</p></li>
+<li><p><strong>elapsed_time</strong> (<em>int</em>) – Time taken to answer in seconds.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p><dl class="simple">
+<dt>True if the answer is correct, False if answer is incorrect,</dt><dd><p>empty, or contains invalid LaTeX syntax.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="logic.GameManager.calculate_points">
+<span class="sig-name descname"><span class="pre">calculate_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">elapsed_time</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">difficulty</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager.calculate_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager.calculate_points" title="Link to this definition"></a></dt>
+<dd><p>Calculate points earned for a correct answer based on time and difficulty.</p>
+<p>Uses an exponential decay function to award more points for faster answers.
+Base points are 50 for easy questions and 100 for hard questions, multiplied
+by exp(-0.1 * elapsed_time).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>elapsed_time</strong> (<em>int</em>) – Time taken to answer in seconds.</p></li>
+<li><p><strong>difficulty</strong> (<em>str</em>) – Question difficulty level (“easy” or “hard”).</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="logic.GameManager.update_points">
+<span class="sig-name descname"><span class="pre">update_points</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">points</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager.update_points"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager.update_points" title="Link to this definition"></a></dt>
+<dd><p>Add points to the player’s current score and update the display.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>points</strong> (<em>int</em>) – Number of points to add to the current score.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="logic.GameManager.finish_game">
+<span class="sig-name descname"><span class="pre">finish_game</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager.finish_game"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager.finish_game" title="Link to this definition"></a></dt>
+<dd><p>End the current game session and optionally save the score.</p>
+<p>Disables game UI elements, re-enables menu options, stops the timer,
+and prompts the player to save their score to the database.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="logic.GameManager.save_score">
+<span class="sig-name descname"><span class="pre">save_score</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">player_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager.save_score"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager.save_score" title="Link to this definition"></a></dt>
+<dd><p>Save the player’s score to the database with error handling.</p>
+<p>Converts the list of selected subjects to a comma-separated string and
+attempts to save the score to the database. If the save fails, displays
+a warning dialog to the user via the GUI.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>player_name</strong> (<em>str</em>) – The name of the player.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Prints debug information to console regardless of success/failure.</p>
+</div>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="logic.GameManager.get_scores">
+<span class="sig-name descname"><span class="pre">get_scores</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager.get_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager.get_scores" title="Link to this definition"></a></dt>
+<dd><p>Retrieve all scores from the database.</p>
+<p>Delegates to the database manager to fetch all saved scores.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>List of tuples containing score data (name, score, difficulty, subject, date).</dt><dd><p>Returns empty list if database error occurs.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>list</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="logic.GameManager.init_db">
+<span class="sig-name descname"><span class="pre">init_db</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/logic.html#GameManager.init_db"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#logic.GameManager.init_db" title="Link to this definition"></a></dt>
+<dd><p>Initialize the database by creating required tables.</p>
+<p>Delegates to the database manager to ensure the scores table exists.
+Should be called at application startup.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if initialization successful, False if database error occurred.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>bool</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class" id="module-gui">
+<dt class="sig sig-object py" id="gui.MainWindow">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gui.</span></span><span class="sig-name descname"><span class="pre">MainWindow</span></span><a class="reference internal" href="_modules/gui.html#MainWindow"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gui.MainWindow" title="Link to this definition"></a></dt>
+<dd><p>Main window for the math game application.</p>
+<p>This class creates and manages the main user interface including the menu bar,
+question display area, answer input field, and control buttons.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gui.MainWindow.questionWidget">
+<span class="sig-name descname"><span class="pre">questionWidget</span></span><a class="headerlink" href="#gui.MainWindow.questionWidget" title="Link to this definition"></a></dt>
+<dd><p>Label widget displaying the current math question.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>QLabel</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gui.MainWindow.answerInput">
+<span class="sig-name descname"><span class="pre">answerInput</span></span><a class="headerlink" href="#gui.MainWindow.answerInput" title="Link to this definition"></a></dt>
+<dd><p>Input field for the user’s answer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>QLineEdit</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gui.MainWindow.submitButton">
+<span class="sig-name descname"><span class="pre">submitButton</span></span><a class="headerlink" href="#gui.MainWindow.submitButton" title="Link to this definition"></a></dt>
+<dd><p>Button to submit the answer.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>QPushButton</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gui.MainWindow.skipButton">
+<span class="sig-name descname"><span class="pre">skipButton</span></span><a class="headerlink" href="#gui.MainWindow.skipButton" title="Link to this definition"></a></dt>
+<dd><p>Button to skip the current question.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>QPushButton</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gui.MainWindow.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gui.html#MainWindow.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gui.MainWindow.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the main window and create the user interface.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gui.MainWindow.update_question_display">
+<span class="sig-name descname"><span class="pre">update_question_display</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">latex_question</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="_modules/gui.html#MainWindow.update_question_display"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gui.MainWindow.update_question_display" title="Link to this definition"></a></dt>
+<dd><p>Update the question display with LaTeX rendering.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>latex_question</strong> (<em>str</em>) – LaTeX formatted question string.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gui.MainWindow.on_submit">
+<span class="sig-name descname"><span class="pre">on_submit</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gui.html#MainWindow.on_submit"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gui.MainWindow.on_submit" title="Link to this definition"></a></dt>
+<dd><p>Handle the submit button click.</p>
+<p>Retrieves the user’s answer from the input field, stops the timer,
+and passes the answer to the game manager for validation.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gui.MainWindow.on_skip">
+<span class="sig-name descname"><span class="pre">on_skip</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gui.html#MainWindow.on_skip"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gui.MainWindow.on_skip" title="Link to this definition"></a></dt>
+<dd><p>Handle the skip button click.</p>
+<p>Loads the next question without checking the current answer.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gui.MainWindow.update_selected_subjects">
+<span class="sig-name descname"><span class="pre">update_selected_subjects</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gui.html#MainWindow.update_selected_subjects"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gui.MainWindow.update_selected_subjects" title="Link to this definition"></a></dt>
+<dd><p>Update the game manager with selected subjects.</p>
+<p>Reads the checkbox states from the subject menu and passes the list of
+selected subjects to the game manager.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gui.MainWindow.update_selected_difficulty">
+<span class="sig-name descname"><span class="pre">update_selected_difficulty</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gui.html#MainWindow.update_selected_difficulty"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gui.MainWindow.update_selected_difficulty" title="Link to this definition"></a></dt>
+<dd><p>Update the game manager with selected difficulty level.</p>
+<p>Reads the checkbox states from the level menu and passes the selected
+difficulty to the game manager.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gui.MainWindow.show_save_score_dialog">
+<span class="sig-name descname"><span class="pre">show_save_score_dialog</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gui.html#MainWindow.show_save_score_dialog"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gui.MainWindow.show_save_score_dialog" title="Link to this definition"></a></dt>
+<dd><p>Show dialog to save player’s score with input validation.</p>
+<p>Displays an input dialog for the player to enter their name and save
+their score to the database. Validates that the name is not empty or
+whitespace-only and is within acceptable length limits (1-50 characters).
+If validation fails, shows an error message and prompts again in a loop
+until a valid name is entered or the user cancels.</p>
+<p>The validated name is trimmed of leading/trailing whitespace before saving.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><dl class="simple">
+<dt>Player’s trimmed name if they chose to save and name is valid,</dt><dd><p>None if cancelled.</p>
+</dd>
+</dl>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str or None</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gui.MainWindow.open_scoreboard">
+<span class="sig-name descname"><span class="pre">open_scoreboard</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gui.html#MainWindow.open_scoreboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gui.MainWindow.open_scoreboard" title="Link to this definition"></a></dt>
+<dd><p>Open the scoreboard window.</p>
+<p>Creates a new Scoreboard window if one doesn’t exist, then shows and
+raises it to the front. Reuses the existing window if already created.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The scoreboard window is not destroyed when closed by the user,
+so it maintains its state between opens.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="gui.Scoreboard">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">gui.</span></span><span class="sig-name descname"><span class="pre">Scoreboard</span></span><a class="reference internal" href="_modules/gui.html#Scoreboard"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gui.Scoreboard" title="Link to this definition"></a></dt>
+<dd><p>Window displaying the high scores table.</p>
+<p>This widget shows all saved scores from the database in a sortable table
+format, including player names, scores, difficulty, subject, and date.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="gui.Scoreboard.table">
+<span class="sig-name descname"><span class="pre">table</span></span><a class="headerlink" href="#gui.Scoreboard.table" title="Link to this definition"></a></dt>
+<dd><p>The table widget displaying score data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>QTableWidget</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gui.Scoreboard.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gui.html#Scoreboard.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gui.Scoreboard.__init__" title="Link to this definition"></a></dt>
+<dd><p>Initialize the scoreboard window and load scores from the database.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="gui.Scoreboard.load_scores">
+<span class="sig-name descname"><span class="pre">load_scores</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/gui.html#Scoreboard.load_scores"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#gui.Scoreboard.load_scores" title="Link to this definition"></a></dt>
+<dd><p>Load and display scores from the database.</p>
+<p>Queries the database for all scores via the GameManager, sorted by score
+in descending order, and populates the table widget with the results.
+Each row contains the player’s name, score, difficulty, subject, and date.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If database errors occur, an empty list is returned and the table
+will be empty but the application will continue running.</p>
+</div>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2025, Vilmer Dahlqvist.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
