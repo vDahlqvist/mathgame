@@ -39,6 +39,9 @@ class DatabaseManager:
         
         except sqlite3.Error:
             return False
+        finally:
+            conn.commit()
+            conn.close()
 
     def save_score(self, name, score, difficulty, subject):
         """Save a player's score to the database.
@@ -78,6 +81,9 @@ class DatabaseManager:
 
         except sqlite3.Error:
             return False
+        finally:
+            conn.commit()
+            conn.close()
         
     def get_scores(self):
         """Retrieve all scores from the database sorted by score descending.
@@ -100,4 +106,6 @@ class DatabaseManager:
         except sqlite3.Error as e:
             print(f"Database error: {e}")
             return []
+        finally:
+            conn.close()
 

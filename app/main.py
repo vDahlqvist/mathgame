@@ -22,10 +22,12 @@ def main():
     window = MainWindow()
     window.show()
 
-    sys.exit(app.exec_())
-
     logic = GameManager()
     logic.init_db()
+
+    sys.exit(app.exec_())
+
+
 
 def apply_stylesheet(app, filename="style.qss"):
     """Apply QSS stylesheet to the application.

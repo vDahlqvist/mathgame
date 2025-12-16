@@ -4,6 +4,7 @@ from questions import QUESTIONS
 import random
 import math
 from db import DatabaseManager
+from PyQt5.QtWidgets import QMessageBox
 
 
 class GameManager:
@@ -232,7 +233,6 @@ class GameManager:
         print(f"Saving score for {player_name}: {self.current_points} points, at {self.current_difficulty} difficulty, in {self.selected_subjects}")
         if not success:
             if self.gui:
-                from PyQt5.QtWidgets import QMessageBox
                 QMessageBox.warning(
                     self.gui,
                     "Save Failed",
