@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QMenuBar, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QInputDialog, QTableWidgetItem, QTableWidget
+from PyQt5.QtWidgets import QMainWindow, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QInputDialog, QTableWidgetItem, QTableWidget, QMessageBox
 from PyQt5.QtCore import Qt, QTimer, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from logic import GameManager
@@ -20,7 +20,7 @@ class MainWindow(QMainWindow):
         """Initialize the main window and create the user interface."""
         super().__init__()
 
-        # Initialize timer variables BEFORE creating UI
+        # Initialize variables
         self.time_elapsed = 0
         self.start_time = 0
         self.timer = QTimer()
@@ -28,8 +28,7 @@ class MainWindow(QMainWindow):
         self.scoreboard_window = None
 
 
-        self.game_manager = GameManager(gui=self)  # Pass self reference
-        # Create the main layout first
+        self.game_manager = GameManager(gui=self)
         self._createUI()
         
     def _createUI(self):
@@ -95,13 +94,13 @@ class MainWindow(QMainWindow):
         self.selectAlgebra.triggered.connect(self.update_selected_subjects)
         self.selectEquations.triggered.connect(self.update_selected_subjects)
         self.selectCalculus.triggered.connect(self.update_selected_subjects)
-
+        # Adding button for ending game
         self.endGame = self.endGameMenu.addAction("Quit game")
         self.endGame.triggered.connect(self.game_manager.finish_game)
-
+        # Action for selecting difficulty
         self.selectEasy.triggered.connect(self.update_selected_difficulty)
         self.selectHard.triggered.connect(self.update_selected_difficulty)
-
+        # Action for opening score menu
         self.seeScores = self.seeScoresMenu.addAction("Show Scores")
         self.seeScores.triggered.connect(self.open_scoreboard)
 
@@ -220,12 +219,21 @@ class MainWindow(QMainWindow):
         return self.pointsWidget
     
     def _updateTimer(self):
-        """Update the timer display by counting up."""
+        """Update the timer display by counting up.
+        
+        Increments the elapsed time counter by 1 second and updates the
+        timer display widget. This is called automatically by the QTimer
+        every 1000ms (1 second).
+        """
         self.time_elapsed += 1
         self.timerWidget.setText(f"Time: {self.time_elapsed}s")
 
     def _startTimer(self):
-        """Start the question timer."""
+        """Start the question timer.
+        
+        Resets the elapsed time to 0, updates the display, and starts the QTimer
+        to increment every 1000ms (1 second). Records the current time for reference.
+        """
         import time
         self.start_time = time.time()  # Store when timer started
         self.time_elapsed = 0  # Reset to 0
@@ -233,7 +241,11 @@ class MainWindow(QMainWindow):
         self.timer.start(1000)  # Timer ticks every second (1000ms)
         
     def _stopTimer(self):
-        """Stop the timer and return elapsed time."""
+        """Stop the timer and return elapsed time.
+        
+        Returns:
+            int: The elapsed time in seconds since the timer was started.
+        """
         self.timer.stop()
         return self.time_elapsed  # Return elapsed seconds
     
@@ -299,30 +311,59 @@ class MainWindow(QMainWindow):
     def show_save_score_dialog(self):
         """Show dialog to save player's score.
         
-        Returns:
-            str or None: Player's name if they chose to save, None if cancelled.
-        """
-        name, ok = QInputDialog.getText(
-            self,
-            "Spara Resultat",
-            "Namn:",
-            QLineEdit.Normal,
-            ""
-        )
+        Displays an input dialog for the player to enter their name and save
+        their score to the database. Validates that the name is not empty or
+        whitespace-only and is within acceptable length limits (1-50 characters).
+        If validation fails, shows an error message and prompts again.
         
-        if ok and name:
-            # User clicked "Spara" and entered a name
-            self.game_manager.save_score(name)
-        else:
-            # User clicked "Spara inte" or cancelled
-            return None
+        Returns:
+            str or None: Player's name if they chose to save and name is valid,
+                        None if cancelled.
+        """
+        while True:
+            name, ok = QInputDialog.getText(
+                self,
+                "Save Result?",
+                "Name:",
+                QLineEdit.Normal,
+                ""
+            )
+            
+            if not ok:
+                # User cancelled
+                return None
+            
+            # Validate name
+            if not name or not name.strip():
+                QMessageBox.warning(
+                    self,
+                    "Invalid Name",
+                    "Please enter a valid name (not empty or whitespace only)."
+                )
+                continue
+            
+            if len(name.strip()) > 50:
+                QMessageBox.warning(
+                    self,
+                    "Invalid Name",
+                    "Name must be 50 characters or less."
+                )
+                continue
+            
+            # Name is valid
+            self.game_manager.save_score(name.strip())
+            return name.strip()
         
 
     def open_scoreboard(self):
         """Open the scoreboard window.
         
         Creates a new Scoreboard window if one doesn't exist, then shows and
-        raises it to the front.
+        raises it to the front. Reuses the existing window if already created.
+        
+        Note:
+            The scoreboard window is not destroyed when closed by the user,
+            so it maintains its state between opens.
         """
         if self.scoreboard_window is None:
             self.scoreboard_window = Scoreboard()
@@ -346,6 +387,8 @@ class Scoreboard(QWidget):
         self.setWindowTitle("Scoreboard")
         self.resize(700, 400)
 
+        self.logic = GameManager()
+
         layout = QVBoxLayout(self)
         self.table = QTableWidget()
         layout.addWidget(self.table)
@@ -356,18 +399,16 @@ class Scoreboard(QWidget):
     def load_scores(self):
         """Load and display scores from the database.
         
-        Queries the database for all scores, sorted by score in descending order,
-        and populates the table widget with the results. Each row contains the
-        player's name, score, difficulty, subject, and date.
+        Queries the database for all scores via the GameManager, sorted by score
+        in descending order, and populates the table widget with the results.
+        Each row contains the player's name, score, difficulty, subject, and date.
+        
+        Note:
+            If database errors occur, an empty list is returned and the table
+            will be empty but the application will continue running.
         """
-        import sqlite3
-        conn = sqlite3.connect("scores.db")
-        cursor = conn.cursor()
-        cursor.execute("""
-            SELECT name, score, difficulty, subject, date
-            FROM scores ORDER BY score DESC
-        """)
-        rows = cursor.fetchall()
+
+        rows = self.logic.get_scores()
 
         self.table.setRowCount(len(rows))
         self.table.setColumnCount(5)
