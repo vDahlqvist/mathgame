@@ -4,6 +4,7 @@ from questions import QUESTIONS
 import random
 import math
 from db import DatabaseManager
+from PyQt5.QtWidgets import QMessageBox
 
 
 class GameManager:
@@ -45,7 +46,8 @@ class GameManager:
         """Set the difficulty level for the game.
         
         Args:
-            difficulty (str): Difficulty level ("easy" or "hard")
+            difficulty (str or None): Difficulty level ("easy" or "hard").
+                Can be None if no difficulty is selected.
         """
         self.current_difficulty = difficulty
         print(f"Difficulty set to: {difficulty}")
@@ -54,7 +56,8 @@ class GameManager:
         """Set the selected subjects for the game.
         
         Args:
-            subjects (list): List of subject names (e.g., ["algebra", "equations"])
+            subjects (list): List of subject names (e.g., ["algebra", "equations"]).
+                Can be an empty list if no subjects are selected.
         """
         self.selected_subjects = subjects
         print(f"Selected subjects: {subjects}")
@@ -62,8 +65,12 @@ class GameManager:
     def start_game(self):
         """Start a new game and initialize game state.
         
-        Resets game counters and enables UI components for gameplay while disabling
-        menu options that shouldn't be changed during an active game.
+        Enables UI components for gameplay while disabling menu options that
+        shouldn't be changed during an active game. Loads the first question.
+        
+        Note:
+            Currently does not reset points or questions_completed counters.
+            This should be addressed in future updates.
         """
         print("Game started")
         if self.gui:
@@ -85,6 +92,9 @@ class GameManager:
         Randomly selects a subject from the player's chosen subjects, then picks
         a random question at the current difficulty level. Updates the GUI with
         the new question and starts the timer.
+        
+        Returns:
+            None: Returns early if no subjects are selected.
         """
         
         if not self.selected_subjects:
@@ -206,13 +216,51 @@ class GameManager:
             
         
     def save_score(self, player_name):
-        """Convert list of subjects to a string and save the player's score to the database.
+        """Save the player's score to the database with error handling.
+        
+        Converts the list of selected subjects to a comma-separated string and
+        attempts to save the score to the database. If the save fails, displays
+        a warning dialog to the user via the GUI.
         
         Args:
             player_name (str): The name of the player.
+            
+        Note:
+            Prints debug information to console regardless of success/failure.
         """
         selected_subjects_str = ", ".join(self.selected_subjects)
-        self.db.save_score(player_name, self.current_points, self.current_difficulty, selected_subjects_str)
+        success = self.db.save_score(player_name, self.current_points, self.current_difficulty, selected_subjects_str)
         print(f"Saving score for {player_name}: {self.current_points} points, at {self.current_difficulty} difficulty, in {self.selected_subjects}")
+        if not success:
+            if self.gui:
+                QMessageBox.warning(
+                    self.gui,
+                    "Save Failed",
+                    "Could not save score to database. Please try again."
+                    )
+                
+    def get_scores(self):
+        """Retrieve all scores from the database.
+        
+        Delegates to the database manager to fetch all saved scores.
+        
+        Returns:
+            list: List of tuples containing score data (name, score, difficulty, subject, date).
+                Returns empty list if database error occurs.
+        """
+        scores = self.db.get_scores()
+        return scores
+    
+    def init_db(self):
+        """Initialize the database by creating required tables.
+        
+        Delegates to the database manager to ensure the scores table exists.
+        Should be called at application startup.
+        
+        Returns:
+            bool: True if initialization successful, False if database error occurred.
+        """
+        return self.db.init_db()
+
 
 
