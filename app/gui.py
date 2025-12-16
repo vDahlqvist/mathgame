@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QMenuBar, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QInputDialog, QTableWidgetItem, QTableWidget
+from PyQt5.QtWidgets import QMainWindow, QMenuBar, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QInputDialog, QTableWidgetItem, QTableWidget, QMessageBox
 from PyQt5.QtCore import Qt, QTimer, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from logic import GameManager
@@ -312,26 +312,47 @@ class MainWindow(QMainWindow):
         """Show dialog to save player's score.
         
         Displays an input dialog for the player to enter their name and save
-        their score to the database. If the player cancels or enters no name,
-        the score is not saved.
+        their score to the database. Validates that the name is not empty or
+        whitespace-only and is within acceptable length limits (1-50 characters).
+        If validation fails, shows an error message and prompts again.
         
         Returns:
-            str or None: Player's name if they chose to save, None if cancelled.
+            str or None: Player's name if they chose to save and name is valid,
+                        None if cancelled.
         """
-        name, ok = QInputDialog.getText(
-            self,
-            "Spara Resultat",
-            "Namn:",
-            QLineEdit.Normal,
-            ""
-        )
-        
-        if ok and name:
-            # User clicked "Spara" and entered a name
-            self.game_manager.save_score(name)
-        else:
-            # User clicked "Spara inte" or cancelled
-            return None
+        while True:
+            name, ok = QInputDialog.getText(
+                self,
+                "Spara Resultat",
+                "Namn:",
+                QLineEdit.Normal,
+                ""
+            )
+            
+            if not ok:
+                # User cancelled
+                return None
+            
+            # Validate name
+            if not name or not name.strip():
+                QMessageBox.warning(
+                    self,
+                    "Invalid Name",
+                    "Please enter a valid name (not empty or whitespace only)."
+                )
+                continue
+            
+            if len(name.strip()) > 50:
+                QMessageBox.warning(
+                    self,
+                    "Invalid Name",
+                    "Name must be 50 characters or less."
+                )
+                continue
+            
+            # Name is valid
+            self.game_manager.save_score(name.strip())
+            return name.strip()
         
 
     def open_scoreboard(self):
