@@ -1,4 +1,4 @@
-from PyQt5.QtWidgets import QMainWindow, QMenuBar, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QInputDialog, QTableWidgetItem, QTableWidget, QMessageBox
+from PyQt5.QtWidgets import QMainWindow, QMenu, QWidget, QVBoxLayout, QHBoxLayout, QLabel, QPushButton, QLineEdit, QInputDialog, QTableWidgetItem, QTableWidget, QMessageBox
 from PyQt5.QtCore import Qt, QTimer, QUrl
 from PyQt5.QtWebEngineWidgets import QWebEngineView
 from logic import GameManager
@@ -323,8 +323,8 @@ class MainWindow(QMainWindow):
         while True:
             name, ok = QInputDialog.getText(
                 self,
-                "Spara Resultat",
-                "Namn:",
+                "Save Result?",
+                "Name:",
                 QLineEdit.Normal,
                 ""
             )

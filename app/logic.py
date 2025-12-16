@@ -137,7 +137,7 @@ class GameManager:
             if self.gui:
                 QMessageBox.warning(
                     self.gui,
-                    "Empty Answer",
+                    "Empty Answer", 
                     "Please enter an answer before submitting."
                 )
             return False
@@ -150,7 +150,7 @@ class GameManager:
             if self.gui:
                 QMessageBox.critical(
                     self.gui,
-                    "Invalid LaTeX",
+                    "Invalid Input",
                     f"Could not parse answer as LaTeX.\nError: {str(e)}\n\nPlease check your syntax."
                 )
             return False
